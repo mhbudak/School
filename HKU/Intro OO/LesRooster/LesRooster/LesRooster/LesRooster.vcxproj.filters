@@ -24,12 +24,57 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Login.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Docent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lokaal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vakken.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Richting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Kalender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LesRooster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LesRooster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Login.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Docent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lokaal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vakken.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Richting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Kalender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
