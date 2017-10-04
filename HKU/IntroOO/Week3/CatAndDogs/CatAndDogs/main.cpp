@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Animal.h"
+
 #include "Cat.h"
 #include "Dog.h"
 #include "AnimalDetector.h"
