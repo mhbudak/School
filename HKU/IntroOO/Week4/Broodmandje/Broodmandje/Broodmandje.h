@@ -7,5 +7,5 @@ class Broodmandje {
 		void toon();
 		void voegToe(std::string type);
 	private:
-		Broodje* broodje = new Broodje();;
+		Broodje* broodje = new Broodje();
 };
