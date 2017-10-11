@@ -8,7 +8,7 @@ class Broodmandje {
 		void voegToe(std::string type);
 		virtual ~Broodmandje();
 		Broodmandje(const Broodmandje& anderMandje);
-		Broodmandje& operator = (const Broodmandje&);
+		Broodmandje& operator=(const Broodmandje&);
 
 	private:
 		Broodje* broodje = new Broodje();

@@ -26,7 +26,11 @@ Broodmandje::Broodmandje(const Broodmandje & anderMandje) {
 	broodje->_type = anderMandje.broodje->_type;
 }
 
-Broodmandje & Broodmandje::operator=(const Broodmandje& anderMandje) {
-	broodje = new Broodje;
-	broodje->_type = anderMandje.broodje->_type;
+Broodmandje& Broodmandje::operator=(const Broodmandje& anderMandje) {
+	if(this != &anderMandje){
+		delete broodje;
+		broodje = new Broodje;
+		broodje->_type = anderMandje.broodje->_type;
+	}
+	return *this;
 }
