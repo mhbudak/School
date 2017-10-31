@@ -3,6 +3,8 @@
 
 Cat::Cat(const std::string& name): Animal(name) {
 	public:
-		void makeNoise();
+		void makeNoise(); 
+
+
 };
 
