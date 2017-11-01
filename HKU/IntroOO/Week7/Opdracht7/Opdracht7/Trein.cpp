@@ -5,6 +5,6 @@
 
 Trein::Trein() {}
 
-void Trein::PrijsBereken() {
+void Trein::PrijsBereken(int km) {
 	return (prijs*km) * aantalPassagiers;
 }
