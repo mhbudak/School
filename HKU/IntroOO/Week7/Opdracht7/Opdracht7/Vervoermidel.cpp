@@ -1,11 +1,14 @@
 #include "Vervoermidel.h"
 
 
-void Vervoermidel::Prijs() {
-}
-
 Vervoermidel::Vervoermidel() {
 }
 
 Vervoermidel::~Vervoermidel() {
+}
+
+void Vervoermidel::PrijsBereken() {
+}
+
+void Vervoermidel::getaantalPassagiers() {
 }

@@ -1,8 +1,12 @@
 #pragma once
 class Vervoermidel {
 public:
-	virtual void Prijs();
 	Vervoermidel();
-	~Vervoermidel();
-};
+	int aantalPassagiers;
+	float prijs;
+	float toeslag;
+	bool heeftToeslag;
 
+	virtual void PrijsBereken();
+	void getaantalPassagiers();
+};

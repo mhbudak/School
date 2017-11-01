@@ -1,13 +1,18 @@
 #pragma once
 #include <iostream>
+#include "SnelTrein.h"
 #include "Vervoermidel.h"
 
 class Trein: Vervoermidel {
 public:
 
-	void Prijs();
+	Trein(int _aantalPassagiers, float _prijsPerKm) {
+		aantalPassagiers = _aantalPassagiers;
+		prijs = _prijsPerKm;
+	}
 
-	Trein();
+	void PrijsBereken() {}
+
 	~Trein();
+	Trein();
 };
-

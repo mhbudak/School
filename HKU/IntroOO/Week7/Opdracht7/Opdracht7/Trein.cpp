@@ -1,17 +1,10 @@
-#include "Trein.h"
 #include <iostream>
+#include "SnelTrein.h"
+#include "Vervoermidel.h"
+#include "Trein.h"
 
+Trein::Trein() {}
 
-void Prijs() {
-
-}
-
-void Trein::Prijs() {
-}
-
-Trein::Trein() {
-}
-
-
-Trein::~Trein() {
+void Trein::PrijsBereken() {
+	return (prijs*km) * aantalPassagiers;
 }
