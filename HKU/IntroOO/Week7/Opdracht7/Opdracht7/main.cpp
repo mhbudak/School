@@ -4,6 +4,8 @@
 
 int main() {
 
+
+
 	std::cout << "Press key to quit" << std::endl;
 	char c;
 	std::cin >> c;
