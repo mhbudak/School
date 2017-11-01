@@ -25,41 +25,71 @@ int main() {
 	std::ifstream file1("..\\nummer1.txt");
 	std::ifstream file2("..\\nummer2.txt");
 	std::ofstream combined_file("..\\nummer3.txt");
-	//combined_file << file1.rdbuf() << file2.rdbuf();
-
-
-	char ch;
-	file1.open("..\\nummer1.txt");
-	file2.open("..\\nummer2.txt");
-	if (!file1) {
-		std::cout << "probleem bij openen File" << std::endl;
-		
+	std::string line;
+	
+	{
+	std::getline(file1, line);
+	combined_file << line << '\n';
+	std::getline(file2, line);
+	combined_file << line << '\n';
+	std::getline(file1, line);
+	combined_file << line << '\n';
+	std::getline(file2, line);
+	combined_file << line << '\n';
+	std::getline(file1, line);
+	combined_file << line << '\n';
+	std::getline(file2, line);
+	combined_file << line << '\n';
+	std::getline(file1, line);
+	combined_file << line << '\n';
+	std::getline(file2, line);
+	combined_file << line << '\n';
+	std::getline(file1, line);
+	combined_file << line << '\n';
+	std::getline(file2, line);
+	combined_file << line << '\n';
 	}
 
-	combined_file.open("..\\nummer3.txt");
-	if (!combined_file) {
-		std::cout << "probleem bij openen out File" << std::endl;
-		
-	}
+	/*
+	int count = 1;
 
-	bool skip = true;
-
-	file1 >> std::noskipws;
-	while (!file1.eof()) {
-		file1 >> ch;
-
-		skip = !skip;
-		if (!skip) {
-			combined_file << ch;
+	while (std::getline(file1, line)){
+		combined_file << line << '\n';
+		++count;
+		while (std::getline(file2, line)) {
+			combined_file << line << '\n';
+			++count;
+			while (std::getline(file1, line)) {
+				combined_file << line << '\n';
+				++count;
+				while (std::getline(file2, line)) {
+					combined_file << line << '\n';
+					++count;
+					while (std::getline(file1, line)) {
+						combined_file << line << '\n';
+						++count;
+						while (std::getline(file2, line)) {
+							combined_file << line << '\n';
+							++count;
+							while (std::getline(file1, line)) {
+								combined_file << line << '\n';
+								++count;
+								while (std::getline(file2, line)) {
+									combined_file << line << '\n';
+									++count;
+									while (std::getline(file1, line)) {
+										combined_file << line << '\n';
+										++count;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
-	combined_file.close();
-	file1.close();
-	file2.close();
-
-
-
-
+	*/
 	std::cout << "Your File has been reversed to ..\\Muhammed.txt" << std::endl;
 	std::cout << "Press key to quit" << std::endl;
 	char c;
