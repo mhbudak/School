@@ -320,7 +320,7 @@ namespace INFOIBV
          */
         private double[,] CreateGaussianFilter(int size, double sigma)
         {
-            // check if size is even, because we need odd sizes for Gaussian filters
+            // check if size is even, because we need odd sizes for Gaussian filters test
             if (size % 2 == 0)
             {
                 //size += 1; // Increase the size by 1 making it odd.
