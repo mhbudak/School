@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.LoadImageButton1 = new System.Windows.Forms.Button();
+            this.LoadImageButton = new System.Windows.Forms.Button();
             this.openImageDialog = new System.Windows.Forms.OpenFileDialog();
-            this.ImageFileName1 = new System.Windows.Forms.TextBox();
+            this.imageFileName = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.Conver_to_Gray = new System.Windows.Forms.Button();
             this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
@@ -58,38 +58,21 @@
             this.Make_Image_A_button = new System.Windows.Forms.Button();
             this.Make_Image_B_Button = new System.Windows.Forms.Button();
             this.Make_Image_C_button = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
-            this.StrucElemSize = new System.Windows.Forms.NumericUpDown();
-            this.SetStrucElemShape = new System.Windows.Forms.ListBox();
-            this.StructureElementBuildButton = new System.Windows.Forms.Button();
-            this.FunctionList = new System.Windows.Forms.ListBox();
-            this.DoSelectedFunction = new System.Windows.Forms.Button();
-            this.AND_BinaryImage = new System.Windows.Forms.Button();
-            this.OR_BinaryImage = new System.Windows.Forms.Button();
-            this.LoadImage2 = new System.Windows.Forms.Button();
-            this.ImageFileName2 = new System.Windows.Forms.TextBox();
-            this.Image2 = new System.Windows.Forms.Label();
-            this.Image1 = new System.Windows.Forms.Label();
-            this.pictureBox4 = new System.Windows.Forms.PictureBox();
-            this.Image3Label = new System.Windows.Forms.Label();
-            this.Image4Label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.StrucElemSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.SuspendLayout();
             // 
-            // LoadImageButton1
+            // LoadImageButton
             // 
-            this.LoadImageButton1.Location = new System.Drawing.Point(12, 3);
-            this.LoadImageButton1.Name = "LoadImageButton1";
-            this.LoadImageButton1.Size = new System.Drawing.Size(98, 23);
-            this.LoadImageButton1.TabIndex = 0;
-            this.LoadImageButton1.Text = "Load image-1";
-            this.LoadImageButton1.UseVisualStyleBackColor = true;
-            this.LoadImageButton1.Click += new System.EventHandler(this.LoadImageButton1_Click);
+            this.LoadImageButton.Location = new System.Drawing.Point(12, 12);
+            this.LoadImageButton.Name = "LoadImageButton";
+            this.LoadImageButton.Size = new System.Drawing.Size(98, 23);
+            this.LoadImageButton.TabIndex = 0;
+            this.LoadImageButton.Text = "Load image...";
+            this.LoadImageButton.UseVisualStyleBackColor = true;
+            this.LoadImageButton.Click += new System.EventHandler(this.LoadImageButton_Click);
             // 
             // openImageDialog
             // 
@@ -97,13 +80,13 @@
     "ff;*.jpeg";
             this.openImageDialog.InitialDirectory = "..\\..\\images";
             // 
-            // ImageFileName1
+            // imageFileName
             // 
-            this.ImageFileName1.Location = new System.Drawing.Point(116, 5);
-            this.ImageFileName1.Name = "ImageFileName1";
-            this.ImageFileName1.ReadOnly = true;
-            this.ImageFileName1.Size = new System.Drawing.Size(316, 20);
-            this.ImageFileName1.TabIndex = 1;
+            this.imageFileName.Location = new System.Drawing.Point(116, 14);
+            this.imageFileName.Name = "imageFileName";
+            this.imageFileName.ReadOnly = true;
+            this.imageFileName.Size = new System.Drawing.Size(316, 20);
+            this.imageFileName.TabIndex = 1;
             // 
             // pictureBox1
             // 
@@ -117,11 +100,11 @@
             // 
             // Conver_to_Gray
             // 
-            this.Conver_to_Gray.Location = new System.Drawing.Point(478, 3);
+            this.Conver_to_Gray.Location = new System.Drawing.Point(478, 12);
             this.Conver_to_Gray.Name = "Conver_to_Gray";
             this.Conver_to_Gray.Size = new System.Drawing.Size(103, 23);
             this.Conver_to_Gray.TabIndex = 3;
-            this.Conver_to_Gray.Text = "Convert to Gray";
+            this.Conver_to_Gray.Text = "Conver to Gray";
             this.Conver_to_Gray.UseVisualStyleBackColor = true;
             this.Conver_to_Gray.Click += new System.EventHandler(this.Conver_to_Gray_Click);
             // 
@@ -132,13 +115,12 @@
             // 
             // saveButton
             // 
-            this.saveButton.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.saveButton.Location = new System.Drawing.Point(1573, 2);
+            this.saveButton.Location = new System.Drawing.Point(1069, 11);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(95, 23);
             this.saveButton.TabIndex = 4;
             this.saveButton.Text = "Save as BMP...";
-            this.saveButton.UseVisualStyleBackColor = false;
+            this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // pictureBox2
@@ -153,7 +135,7 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(478, 29);
+            this.progressBar.Location = new System.Drawing.Point(478, 40);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(103, 20);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -162,7 +144,7 @@
             // 
             // Invers
             // 
-            this.Invers.Location = new System.Drawing.Point(589, 3);
+            this.Invers.Location = new System.Drawing.Point(589, 12);
             this.Invers.Name = "Invers";
             this.Invers.Size = new System.Drawing.Size(31, 23);
             this.Invers.TabIndex = 7;
@@ -172,7 +154,7 @@
             // 
             // Contrast_Adjustment
             // 
-            this.Contrast_Adjustment.Location = new System.Drawing.Point(626, 3);
+            this.Contrast_Adjustment.Location = new System.Drawing.Point(626, 12);
             this.Contrast_Adjustment.Name = "Contrast_Adjustment";
             this.Contrast_Adjustment.Size = new System.Drawing.Size(55, 23);
             this.Contrast_Adjustment.TabIndex = 8;
@@ -182,7 +164,7 @@
             // 
             // GausFilt
             // 
-            this.GausFilt.Location = new System.Drawing.Point(686, 3);
+            this.GausFilt.Location = new System.Drawing.Point(686, 12);
             this.GausFilt.Margin = new System.Windows.Forms.Padding(2);
             this.GausFilt.Name = "GausFilt";
             this.GausFilt.Size = new System.Drawing.Size(61, 23);
@@ -193,7 +175,7 @@
             // 
             // MedianFilt
             // 
-            this.MedianFilt.Location = new System.Drawing.Point(751, 3);
+            this.MedianFilt.Location = new System.Drawing.Point(751, 12);
             this.MedianFilt.Margin = new System.Windows.Forms.Padding(2);
             this.MedianFilt.Name = "MedianFilt";
             this.MedianFilt.Size = new System.Drawing.Size(63, 23);
@@ -204,7 +186,7 @@
             // 
             // EdgeDed
             // 
-            this.EdgeDed.Location = new System.Drawing.Point(818, 3);
+            this.EdgeDed.Location = new System.Drawing.Point(818, 12);
             this.EdgeDed.Margin = new System.Windows.Forms.Padding(2);
             this.EdgeDed.Name = "EdgeDed";
             this.EdgeDed.Size = new System.Drawing.Size(57, 23);
@@ -215,7 +197,7 @@
             // 
             // Threshold
             // 
-            this.Threshold.Location = new System.Drawing.Point(879, 3);
+            this.Threshold.Location = new System.Drawing.Point(879, 12);
             this.Threshold.Margin = new System.Windows.Forms.Padding(2);
             this.Threshold.Name = "Threshold";
             this.Threshold.Size = new System.Drawing.Size(44, 23);
@@ -236,7 +218,7 @@
             // 
             // HistogramButton
             // 
-            this.HistogramButton.Location = new System.Drawing.Point(587, 26);
+            this.HistogramButton.Location = new System.Drawing.Point(587, 37);
             this.HistogramButton.Name = "HistogramButton";
             this.HistogramButton.Size = new System.Drawing.Size(75, 23);
             this.HistogramButton.TabIndex = 0;
@@ -245,7 +227,7 @@
             // 
             // HistogramEqualization
             // 
-            this.HistogramEqualization.Location = new System.Drawing.Point(927, 3);
+            this.HistogramEqualization.Location = new System.Drawing.Point(927, 12);
             this.HistogramEqualization.Margin = new System.Windows.Forms.Padding(2);
             this.HistogramEqualization.Name = "HistogramEqualization";
             this.HistogramEqualization.Size = new System.Drawing.Size(59, 23);
@@ -256,7 +238,7 @@
             // 
             // EdgeSharpinnig
             // 
-            this.EdgeSharpinnig.Location = new System.Drawing.Point(990, 3);
+            this.EdgeSharpinnig.Location = new System.Drawing.Point(990, 12);
             this.EdgeSharpinnig.Margin = new System.Windows.Forms.Padding(2);
             this.EdgeSharpinnig.Name = "EdgeSharpinnig";
             this.EdgeSharpinnig.Size = new System.Drawing.Size(74, 23);
@@ -268,7 +250,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1045, 26);
+            this.label1.Location = new System.Drawing.Point(1045, 70);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(468, 13);
             this.label1.TabIndex = 17;
@@ -278,7 +260,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1045, 49);
+            this.label2.Location = new System.Drawing.Point(1045, 93);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(623, 13);
             this.label2.TabIndex = 18;
@@ -288,7 +270,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(1045, 75);
+            this.label3.Location = new System.Drawing.Point(1045, 119);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(624, 13);
             this.label3.TabIndex = 19;
@@ -298,7 +280,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1045, 98);
+            this.label4.Location = new System.Drawing.Point(1045, 142);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(305, 13);
             this.label4.TabIndex = 20;
@@ -307,7 +289,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(1045, 121);
+            this.label5.Location = new System.Drawing.Point(1045, 165);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(431, 13);
             this.label5.TabIndex = 21;
@@ -317,7 +299,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(1045, 144);
+            this.label6.Location = new System.Drawing.Point(1045, 188);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(186, 13);
             this.label6.TabIndex = 22;
@@ -330,7 +312,7 @@
             0,
             0,
             0});
-            this.numericUpDown1.Location = new System.Drawing.Point(686, 29);
+            this.numericUpDown1.Location = new System.Drawing.Point(686, 40);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             11,
             0,
@@ -352,9 +334,9 @@
             // 
             // Make_Image_A_button
             // 
-            this.Make_Image_A_button.Location = new System.Drawing.Point(1069, 5);
+            this.Make_Image_A_button.Location = new System.Drawing.Point(1048, 204);
             this.Make_Image_A_button.Name = "Make_Image_A_button";
-            this.Make_Image_A_button.Size = new System.Drawing.Size(88, 21);
+            this.Make_Image_A_button.Size = new System.Drawing.Size(142, 55);
             this.Make_Image_A_button.TabIndex = 24;
             this.Make_Image_A_button.Text = "Make Image A";
             this.Make_Image_A_button.UseVisualStyleBackColor = true;
@@ -362,9 +344,9 @@
             // 
             // Make_Image_B_Button
             // 
-            this.Make_Image_B_Button.Location = new System.Drawing.Point(1163, 5);
+            this.Make_Image_B_Button.Location = new System.Drawing.Point(1196, 204);
             this.Make_Image_B_Button.Name = "Make_Image_B_Button";
-            this.Make_Image_B_Button.Size = new System.Drawing.Size(87, 21);
+            this.Make_Image_B_Button.Size = new System.Drawing.Size(140, 58);
             this.Make_Image_B_Button.TabIndex = 25;
             this.Make_Image_B_Button.Text = "Make Image B";
             this.Make_Image_B_Button.UseVisualStyleBackColor = true;
@@ -372,196 +354,19 @@
             // 
             // Make_Image_C_button
             // 
-            this.Make_Image_C_button.Location = new System.Drawing.Point(1256, 3);
+            this.Make_Image_C_button.Location = new System.Drawing.Point(1342, 206);
             this.Make_Image_C_button.Name = "Make_Image_C_button";
-            this.Make_Image_C_button.Size = new System.Drawing.Size(87, 23);
+            this.Make_Image_C_button.Size = new System.Drawing.Size(142, 56);
             this.Make_Image_C_button.TabIndex = 26;
             this.Make_Image_C_button.Text = "Make Image C";
             this.Make_Image_C_button.UseVisualStyleBackColor = true;
             this.Make_Image_C_button.Click += new System.EventHandler(this.Make_Image_C_button_Click);
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(1044, 160);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(565, 13);
-            this.label7.TabIndex = 27;
-            this.label7.Text = "_________________________________________________________________________________" +
-    "____________";
-            // 
-            // StrucElemSize
-            // 
-            this.StrucElemSize.Increment = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.StrucElemSize.Location = new System.Drawing.Point(1049, 226);
-            this.StrucElemSize.Maximum = new decimal(new int[] {
-            11,
-            0,
-            0,
-            0});
-            this.StrucElemSize.Minimum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.StrucElemSize.Name = "StrucElemSize";
-            this.StrucElemSize.Size = new System.Drawing.Size(49, 20);
-            this.StrucElemSize.TabIndex = 28;
-            this.StrucElemSize.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            // 
-            // SetStrucElemShape
-            // 
-            this.SetStrucElemShape.FormattingEnabled = true;
-            this.SetStrucElemShape.Items.AddRange(new object[] {
-            "Plus",
-            "Square"});
-            this.SetStrucElemShape.Location = new System.Drawing.Point(1047, 202);
-            this.SetStrucElemShape.Name = "SetStrucElemShape";
-            this.SetStrucElemShape.Size = new System.Drawing.Size(51, 17);
-            this.SetStrucElemShape.TabIndex = 29;
-            // 
-            // StructureElementBuildButton
-            // 
-            this.StructureElementBuildButton.Location = new System.Drawing.Point(1047, 177);
-            this.StructureElementBuildButton.Name = "StructureElementBuildButton";
-            this.StructureElementBuildButton.Size = new System.Drawing.Size(51, 23);
-            this.StructureElementBuildButton.TabIndex = 34;
-            this.StructureElementBuildButton.Text = "StrElm";
-            this.StructureElementBuildButton.UseVisualStyleBackColor = true;
-            this.StructureElementBuildButton.Click += new System.EventHandler(this.StructureElementBuildButton_Click);
-            // 
-            // FunctionList
-            // 
-            this.FunctionList.FormattingEnabled = true;
-            this.FunctionList.Items.AddRange(new object[] {
-            "Erode",
-            "Dilate",
-            "Open",
-            "Close"});
-            this.FunctionList.Location = new System.Drawing.Point(1104, 177);
-            this.FunctionList.Name = "FunctionList";
-            this.FunctionList.Size = new System.Drawing.Size(109, 17);
-            this.FunctionList.TabIndex = 35;
-            // 
-            // DoSelectedFunction
-            // 
-            this.DoSelectedFunction.Location = new System.Drawing.Point(1104, 200);
-            this.DoSelectedFunction.Name = "DoSelectedFunction";
-            this.DoSelectedFunction.Size = new System.Drawing.Size(109, 23);
-            this.DoSelectedFunction.TabIndex = 36;
-            this.DoSelectedFunction.Text = "Do Function Above";
-            this.DoSelectedFunction.UseVisualStyleBackColor = true;
-            this.DoSelectedFunction.Click += new System.EventHandler(this.DoSelectedFunction_Click);
-            // 
-            // AND_BinaryImage
-            // 
-            this.AND_BinaryImage.Location = new System.Drawing.Point(1219, 176);
-            this.AND_BinaryImage.Name = "AND_BinaryImage";
-            this.AND_BinaryImage.Size = new System.Drawing.Size(62, 23);
-            this.AND_BinaryImage.TabIndex = 37;
-            this.AND_BinaryImage.Text = "AND-B.I.";
-            this.AND_BinaryImage.UseVisualStyleBackColor = true;
-            // 
-            // OR_BinaryImage
-            // 
-            this.OR_BinaryImage.Location = new System.Drawing.Point(1219, 200);
-            this.OR_BinaryImage.Name = "OR_BinaryImage";
-            this.OR_BinaryImage.Size = new System.Drawing.Size(62, 23);
-            this.OR_BinaryImage.TabIndex = 38;
-            this.OR_BinaryImage.Text = "OR-B.I.";
-            this.OR_BinaryImage.UseVisualStyleBackColor = true;
-            // 
-            // LoadImage2
-            // 
-            this.LoadImage2.Location = new System.Drawing.Point(12, 32);
-            this.LoadImage2.Name = "LoadImage2";
-            this.LoadImage2.Size = new System.Drawing.Size(98, 23);
-            this.LoadImage2.TabIndex = 39;
-            this.LoadImage2.Text = "Load image-2";
-            this.LoadImage2.UseVisualStyleBackColor = true;
-            this.LoadImage2.Click += new System.EventHandler(this.LoadImage2_Click);
-            // 
-            // ImageFileName2
-            // 
-            this.ImageFileName2.Location = new System.Drawing.Point(116, 35);
-            this.ImageFileName2.Name = "ImageFileName2";
-            this.ImageFileName2.ReadOnly = true;
-            this.ImageFileName2.Size = new System.Drawing.Size(316, 20);
-            this.ImageFileName2.TabIndex = 40;
-            // 
-            // Image2
-            // 
-            this.Image2.AutoSize = true;
-            this.Image2.Location = new System.Drawing.Point(769, 284);
-            this.Image2.Name = "Image2";
-            this.Image2.Size = new System.Drawing.Size(45, 13);
-            this.Image2.TabIndex = 41;
-            this.Image2.Text = "Image-2";
-            // 
-            // Image1
-            // 
-            this.Image1.AutoSize = true;
-            this.Image1.Location = new System.Drawing.Point(214, 284);
-            this.Image1.Name = "Image1";
-            this.Image1.Size = new System.Drawing.Size(45, 13);
-            this.Image1.TabIndex = 42;
-            this.Image1.Text = "Image-1";
-            // 
-            // pictureBox4
-            // 
-            this.pictureBox4.Location = new System.Drawing.Point(1308, 326);
-            this.pictureBox4.Margin = new System.Windows.Forms.Padding(2);
-            this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(512, 512);
-            this.pictureBox4.TabIndex = 43;
-            this.pictureBox4.TabStop = false;
-            // 
-            // Image3Label
-            // 
-            this.Image3Label.AutoSize = true;
-            this.Image3Label.Location = new System.Drawing.Point(1146, 438);
-            this.Image3Label.Name = "Image3Label";
-            this.Image3Label.Size = new System.Drawing.Size(45, 13);
-            this.Image3Label.TabIndex = 44;
-            this.Image3Label.Text = "Image-3";
-            // 
-            // Image4Label
-            // 
-            this.Image4Label.AutoSize = true;
-            this.Image4Label.Location = new System.Drawing.Point(1542, 438);
-            this.Image4Label.Name = "Image4Label";
-            this.Image4Label.Size = new System.Drawing.Size(45, 13);
-            this.Image4Label.TabIndex = 45;
-            this.Image4Label.Text = "Image-4";
-            // 
             // INFOIBV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1842, 845);
-            this.Controls.Add(this.Image4Label);
-            this.Controls.Add(this.Image3Label);
-            this.Controls.Add(this.pictureBox4);
-            this.Controls.Add(this.Image1);
-            this.Controls.Add(this.Image2);
-            this.Controls.Add(this.ImageFileName2);
-            this.Controls.Add(this.LoadImage2);
-            this.Controls.Add(this.OR_BinaryImage);
-            this.Controls.Add(this.AND_BinaryImage);
-            this.Controls.Add(this.DoSelectedFunction);
-            this.Controls.Add(this.FunctionList);
-            this.Controls.Add(this.StructureElementBuildButton);
-            this.Controls.Add(this.SetStrucElemShape);
-            this.Controls.Add(this.StrucElemSize);
-            this.Controls.Add(this.label7);
+            this.ClientSize = new System.Drawing.Size(1672, 587);
             this.Controls.Add(this.Make_Image_C_button);
             this.Controls.Add(this.Make_Image_B_Button);
             this.Controls.Add(this.Make_Image_A_button);
@@ -587,8 +392,8 @@
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.Conver_to_Gray);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.ImageFileName1);
-            this.Controls.Add(this.LoadImageButton1);
+            this.Controls.Add(this.imageFileName);
+            this.Controls.Add(this.LoadImageButton);
             this.Location = new System.Drawing.Point(10, 10);
             this.Name = "INFOIBV";
             this.ShowIcon = false;
@@ -598,8 +403,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.StrucElemSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -607,9 +410,9 @@
 
         #endregion
 
-        private System.Windows.Forms.Button LoadImageButton1;
+        private System.Windows.Forms.Button LoadImageButton;
         private System.Windows.Forms.OpenFileDialog openImageDialog;
-        private System.Windows.Forms.TextBox ImageFileName1;
+        private System.Windows.Forms.TextBox imageFileName;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button Conver_to_Gray;
         private System.Windows.Forms.SaveFileDialog saveImageDialog;
@@ -637,21 +440,6 @@
         private System.Windows.Forms.Button Make_Image_A_button;
         private System.Windows.Forms.Button Make_Image_B_Button;
         private System.Windows.Forms.Button Make_Image_C_button;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.NumericUpDown StrucElemSize;
-        private System.Windows.Forms.ListBox SetStrucElemShape;
-        private System.Windows.Forms.Button StructureElementBuildButton;
-        private System.Windows.Forms.ListBox FunctionList;
-        private System.Windows.Forms.Button DoSelectedFunction;
-        private System.Windows.Forms.Button AND_BinaryImage;
-        private System.Windows.Forms.Button OR_BinaryImage;
-        private System.Windows.Forms.Button LoadImage2;
-        private System.Windows.Forms.TextBox ImageFileName2;
-        private System.Windows.Forms.Label Image2;
-        private System.Windows.Forms.Label Image1;
-        private System.Windows.Forms.PictureBox pictureBox4;
-        private System.Windows.Forms.Label Image3Label;
-        private System.Windows.Forms.Label Image4Label;
     }
 }
 
