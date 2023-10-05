@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 
@@ -1547,58 +1548,15 @@ namespace INFOIBV
             return true;
         }
 
-        private void AND_BinaryImage_Click(object sender, EventArgs e)
+        private bool[,] AndImages(bool[,] image1, bool[,] image2)
         {
-            try
-            {
-                // Perform the AND operation on the images in pictureBox1 and pictureBox2
-                bool[,] result = AndImages();
-
-                // Display the result in pictureBox3
-                DisplayBinaryArray(result, pictureBox3);
-            }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void OR_BinaryImage_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // Perform the OR operation on the images in pictureBox1 and pictureBox2
-                bool[,] result = OrImages();
-
-                // Display the result in pictureBox3
-                DisplayBinaryArray(result, pictureBox3);
-            }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private bool[,] AndImages()
-        {
-            // Check if pictureBox1 and pictureBox2 have valid images
-            if (pictureBox1.Image == null || pictureBox2.Image == null)
-            {
-                throw new ArgumentException("Both pictureBox1 and pictureBox2 must have images.");
-            }
-
-            // Get the binary arrays from the images in pictureBox1 and pictureBox2
-            bool[,] image1 = BitmapToBinaryArray(new Bitmap(pictureBox1.Image));
-            bool[,] image2 = BitmapToBinaryArray(new Bitmap(pictureBox2.Image));
-
-            // Check if the dimensions of the input images match
-            if (image1.GetLength(0) != image2.GetLength(0) || image1.GetLength(1) != image2.GetLength(1))
-            {
-                throw new ArgumentException("Input images must have the same dimensions.");
-            }
-
             int width = image1.GetLength(0);
             int height = image1.GetLength(1);
+
+            if (image2.GetLength(0) != width || image2.GetLength(1) != height)
+            {
+                throw new ArgumentException("Both images must have the same dimensions.");
+            }
 
             bool[,] result = new bool[width, height];
 
@@ -1606,7 +1564,6 @@ namespace INFOIBV
             {
                 for (int y = 0; y < height; y++)
                 {
-                    // Perform pixel-wise AND operation
                     result[x, y] = image1[x, y] && image2[x, y];
                 }
             }
@@ -1614,26 +1571,15 @@ namespace INFOIBV
             return result;
         }
 
-        private bool[,] OrImages()
+        private bool[,] OrImages(bool[,] image1, bool[,] image2)
         {
-            // Check if pictureBox1 and pictureBox2 have valid images
-            if (pictureBox1.Image == null || pictureBox2.Image == null)
-            {
-                throw new ArgumentException("Both pictureBox1 and pictureBox2 must have images.");
-            }
-
-            // Get the binary arrays from the images in pictureBox1 and pictureBox2
-            bool[,] image1 = BitmapToBinaryArray(new Bitmap(pictureBox1.Image));
-            bool[,] image2 = BitmapToBinaryArray(new Bitmap(pictureBox2.Image));
-
-            // Check if the dimensions of the input images match
-            if (image1.GetLength(0) != image2.GetLength(0) || image1.GetLength(1) != image2.GetLength(1))
-            {
-                throw new ArgumentException("Input images must have the same dimensions.");
-            }
-
             int width = image1.GetLength(0);
             int height = image1.GetLength(1);
+
+            if (image2.GetLength(0) != width || image2.GetLength(1) != height)
+            {
+                throw new ArgumentException("Both images must have the same dimensions.");
+            }
 
             bool[,] result = new bool[width, height];
 
@@ -1641,7 +1587,6 @@ namespace INFOIBV
             {
                 for (int y = 0; y < height; y++)
                 {
-                    // Perform pixel-wise OR operation
                     result[x, y] = image1[x, y] || image2[x, y];
                 }
             }
@@ -1649,27 +1594,189 @@ namespace INFOIBV
             return result;
         }
 
-        private void DisplayBinaryArray(bool[,] binaryArray, PictureBox pictureBox)
-        {
-            int width = binaryArray.GetLength(0);
-            int height = binaryArray.GetLength(1);
-            Bitmap resultBitmap = new Bitmap(width, height);
 
-            for (int x = 0; x < width; x++)
+        private void AND_BinaryImage_Click_1(object sender, EventArgs e)
+        {
+            try
             {
-                for (int y = 0; y < height; y++)
+                // Check if both pictureBox1 and pictureBox2 have images
+                if (pictureBox1.Image == null || pictureBox2.Image == null)
                 {
-                    Color pixelColor = binaryArray[x, y] ? Color.Black : Color.White;
-                    resultBitmap.SetPixel(x, y, pixelColor);
+                    MessageBox.Show("Both images must be loaded before performing the AND operation.");
+                    return;
+                }
+
+                // Convert the images in pictureBox1 and pictureBox2 to binary arrays
+                bool[,] image1 = BitmapToBinaryArray(new Bitmap(pictureBox1.Image));
+                bool[,] image2 = BitmapToBinaryArray(new Bitmap(pictureBox2.Image));
+
+                // Perform the AND operation on the binary arrays
+                bool[,] result = AndImages(image1, image2);
+
+                // Display the result in pictureBox4
+                pictureBox4.Image = BinaryArrayToBitmap(result);
+                pictureBox4.Refresh();
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void OR_BinaryImage_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                // Check if both pictureBox1 and pictureBox2 have images
+                if (pictureBox1.Image == null || pictureBox2.Image == null)
+                {
+                    MessageBox.Show("Both images must be loaded before performing the OR operation.");
+                    return;
+                }
+
+                // Convert the images in pictureBox1 and pictureBox2 to binary arrays
+                bool[,] image1 = BitmapToBinaryArray(new Bitmap(pictureBox1.Image));
+                bool[,] image2 = BitmapToBinaryArray(new Bitmap(pictureBox2.Image));
+
+                // Perform the OR operation on the binary arrays
+                bool[,] result = OrImages(image1, image2);
+
+                // Display the result in pictureBox4
+                pictureBox4.Image = BinaryArrayToBitmap(result);
+                pictureBox4.Refresh();
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /* private void DisplayBinaryArray(bool[,] binaryArray, PictureBox pictureBox)
+         {
+             int width = binaryArray.GetLength(0);
+             int height = binaryArray.GetLength(1);
+             Bitmap resultBitmap = new Bitmap(width, height);
+
+             for (int x = 0; x < width; x++)
+             {
+                 for (int y = 0; y < height; y++)
+                 {
+                     Color pixelColor = binaryArray[x, y] ? Color.Black : Color.White;
+                     resultBitmap.SetPixel(x, y, pixelColor);
+                 }
+             }
+
+             pictureBox.Image = resultBitmap;
+             pictureBox.Refresh();
+         }*/
+
+        private void CountValues_Click(object sender, EventArgs e)
+        {
+            // Assuming the grayscale image is in pictureBox2
+            Bitmap grayscaleImage = new Bitmap(pictureBox2.Image);
+
+            // Compute the histogram of the grayscale image
+            int[] histogram = ComputeHistogram(grayscaleImage);
+
+            // Count the number of distinct values
+            int distinctValuesCount = histogram.Count(value => value > 0);
+
+            // Display the number of distinct values
+            MessageBox.Show($"Number of distinct grayscale values: {distinctValuesCount}");
+
+            // If you want to further display or use the histogram, you can do so here
+            // For example, if you want to display the occurrences of each distinct value:
+            StringBuilder histogramValues = new StringBuilder();
+            for (int i = 0; i < histogram.Length; i++)
+            {
+                if (histogram[i] > 0)
+                {
+                    histogramValues.AppendLine($"Value: {i}, Occurrences: {histogram[i]}");
+                }
+            }
+            MessageBox.Show(histogramValues.ToString());
+        }
+        private void traceBoundary_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image == null)
+            {
+                MessageBox.Show("Please load a binary image first.");
+                return;
+            }
+
+            bool[,] binaryImage = BitmapToBinaryArray(new Bitmap(pictureBox1.Image));
+            List<(int, int)> boundary = TraceBoundary(binaryImage);
+
+            // For visualization: Draw the boundary on the image
+            Bitmap boundaryImage = new Bitmap(pictureBox1.Image);
+            foreach (var point in boundary)
+            {
+                boundaryImage.SetPixel(point.Item1, point.Item2, Color.Red); // marking boundary with red color
+            }
+            pictureBox1.Image = boundaryImage;
+            pictureBox1.Refresh();
+
+            MessageBox.Show($"Boundary traced with {boundary.Count} points!");
+        }
+
+        private List<(int, int)> TraceBoundary(bool[,] binaryImage)
+        {
+            int width = binaryImage.GetLength(0);
+            int height = binaryImage.GetLength(1);
+            List<(int, int)> boundary = new List<(int, int)>();
+
+            // Find the starting point
+            (int, int)? start = null;
+            for (int y = 0; y < height && start == null; y++)
+            {
+                for (int x = 0; x < width && start == null; x++)
+                {
+                    if (binaryImage[x, y])
+                    {
+                        start = (x, y);
+                    }
                 }
             }
 
-            pictureBox.Image = resultBitmap;
-            pictureBox.Refresh();
+            if (start == null)
+            {
+                MessageBox.Show("No foreground pixel found in the image.");
+                return boundary;
+            }
+
+            int[] dx = { 0, 1, 1, 1, 0, -1, -1, -1 };
+            int[] dy = { -1, -1, 0, 1, 1, 1, 0, -1 };
+            int dir = 0; // Start direction
+            (int, int) pos = start.Value;
+
+            int maxIterations = width * height; // Safety measure
+            int iterations = 0;
+
+            do
+            {
+                boundary.Add(pos);
+                for (int i = 0; i < 8; i++)
+                {
+                    int newX = pos.Item1 + dx[(dir + i) % 8];
+                    int newY = pos.Item2 + dy[(dir + i) % 8];
+                    if (newX >= 0 && newX < width && newY >= 0 && newY < height && binaryImage[newX, newY])
+                    {
+                        pos = (newX, newY);
+                        dir = (dir + i) % 8;
+                        break;
+                    }
+                }
+
+                iterations++;
+                if (iterations > maxIterations)
+                {
+                    MessageBox.Show("Boundary tracing exceeded the maximum number of iterations. Aborting.");
+                    return boundary;
+                }
+            } while (pos != start.Value);
+
+            return boundary;
         }
-
-
-
 
 
 

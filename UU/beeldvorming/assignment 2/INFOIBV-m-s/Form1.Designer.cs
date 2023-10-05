@@ -73,6 +73,8 @@
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.Image3Label = new System.Windows.Forms.Label();
             this.Image4Label = new System.Windows.Forms.Label();
+            this.CountValues = new System.Windows.Forms.Button();
+            this.traceBoundary = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -469,6 +471,7 @@
             this.AND_BinaryImage.TabIndex = 37;
             this.AND_BinaryImage.Text = "AND-B.I.";
             this.AND_BinaryImage.UseVisualStyleBackColor = true;
+            this.AND_BinaryImage.Click += new System.EventHandler(this.AND_BinaryImage_Click_1);
             // 
             // OR_BinaryImage
             // 
@@ -478,6 +481,7 @@
             this.OR_BinaryImage.TabIndex = 38;
             this.OR_BinaryImage.Text = "OR-B.I.";
             this.OR_BinaryImage.UseVisualStyleBackColor = true;
+            this.OR_BinaryImage.Click += new System.EventHandler(this.OR_BinaryImage_Click_1);
             // 
             // LoadImage2
             // 
@@ -542,11 +546,33 @@
             this.Image4Label.TabIndex = 45;
             this.Image4Label.Text = "Image-4";
             // 
+            // CountValues
+            // 
+            this.CountValues.Location = new System.Drawing.Point(1287, 177);
+            this.CountValues.Name = "CountValues";
+            this.CountValues.Size = new System.Drawing.Size(80, 23);
+            this.CountValues.TabIndex = 46;
+            this.CountValues.Text = "CountValues";
+            this.CountValues.UseVisualStyleBackColor = true;
+            this.CountValues.Click += new System.EventHandler(this.CountValues_Click);
+            // 
+            // traceBoundary
+            // 
+            this.traceBoundary.Location = new System.Drawing.Point(1288, 202);
+            this.traceBoundary.Name = "traceBoundary";
+            this.traceBoundary.Size = new System.Drawing.Size(75, 23);
+            this.traceBoundary.TabIndex = 47;
+            this.traceBoundary.Text = "traceBoundary";
+            this.traceBoundary.UseVisualStyleBackColor = true;
+            this.traceBoundary.Click += new System.EventHandler(this.traceBoundary_Click);
+            // 
             // INFOIBV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1842, 845);
+            this.Controls.Add(this.traceBoundary);
+            this.Controls.Add(this.CountValues);
             this.Controls.Add(this.Image4Label);
             this.Controls.Add(this.Image3Label);
             this.Controls.Add(this.pictureBox4);
@@ -652,6 +678,8 @@
         private System.Windows.Forms.PictureBox pictureBox4;
         private System.Windows.Forms.Label Image3Label;
         private System.Windows.Forms.Label Image4Label;
+        private System.Windows.Forms.Button CountValues;
+        private System.Windows.Forms.Button traceBoundary;
     }
 }
 
