@@ -75,6 +75,7 @@
             this.Image4Label = new System.Windows.Forms.Label();
             this.CountValues = new System.Windows.Forms.Button();
             this.traceBoundary = new System.Windows.Forms.Button();
+            this.Real_traceBoundary = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -469,7 +470,7 @@
             this.AND_BinaryImage.Name = "AND_BinaryImage";
             this.AND_BinaryImage.Size = new System.Drawing.Size(62, 23);
             this.AND_BinaryImage.TabIndex = 37;
-            this.AND_BinaryImage.Text = "AND-B.I.";
+            this.AND_BinaryImage.Text = "OR-B.I.";
             this.AND_BinaryImage.UseVisualStyleBackColor = true;
             this.AND_BinaryImage.Click += new System.EventHandler(this.AND_BinaryImage_Click_1);
             // 
@@ -479,7 +480,7 @@
             this.OR_BinaryImage.Name = "OR_BinaryImage";
             this.OR_BinaryImage.Size = new System.Drawing.Size(62, 23);
             this.OR_BinaryImage.TabIndex = 38;
-            this.OR_BinaryImage.Text = "OR-B.I.";
+            this.OR_BinaryImage.Text = "AND-B.I.";
             this.OR_BinaryImage.UseVisualStyleBackColor = true;
             this.OR_BinaryImage.Click += new System.EventHandler(this.OR_BinaryImage_Click_1);
             // 
@@ -558,19 +559,30 @@
             // 
             // traceBoundary
             // 
-            this.traceBoundary.Location = new System.Drawing.Point(1288, 202);
+            this.traceBoundary.Location = new System.Drawing.Point(1373, 177);
             this.traceBoundary.Name = "traceBoundary";
             this.traceBoundary.Size = new System.Drawing.Size(75, 23);
             this.traceBoundary.TabIndex = 47;
-            this.traceBoundary.Text = "traceBoundary";
+            this.traceBoundary.Text = "Floodfill";
             this.traceBoundary.UseVisualStyleBackColor = true;
             this.traceBoundary.Click += new System.EventHandler(this.traceBoundary_Click);
+            // 
+            // Real_traceBoundary
+            // 
+            this.Real_traceBoundary.Location = new System.Drawing.Point(1288, 202);
+            this.Real_traceBoundary.Name = "Real_traceBoundary";
+            this.Real_traceBoundary.Size = new System.Drawing.Size(79, 23);
+            this.Real_traceBoundary.TabIndex = 48;
+            this.Real_traceBoundary.Text = "traceBoundary";
+            this.Real_traceBoundary.UseVisualStyleBackColor = true;
+            this.Real_traceBoundary.Click += new System.EventHandler(this.Real_traceBoundary_Click);
             // 
             // INFOIBV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1842, 845);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.Real_traceBoundary);
             this.Controls.Add(this.traceBoundary);
             this.Controls.Add(this.CountValues);
             this.Controls.Add(this.Image4Label);
@@ -680,6 +692,7 @@
         private System.Windows.Forms.Label Image4Label;
         private System.Windows.Forms.Button CountValues;
         private System.Windows.Forms.Button traceBoundary;
+        private System.Windows.Forms.Button Real_traceBoundary;
     }
 }
 

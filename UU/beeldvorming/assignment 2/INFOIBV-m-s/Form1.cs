@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -11,11 +14,11 @@ namespace INFOIBV
 {
     public partial class INFOIBV : Form
     {
-        private Bitmap InputImage;
+        private Bitmap InputImage1;
+        private Bitmap InputImage2;
         private Bitmap OutputImage;
         private int k_size;
         private double Sigma;
-        private Bitmap inputImage;
         private Bitmap equalizedImage;
         private int[] equalizedHistogram;
         private int[] equalizedCDF;
@@ -26,66 +29,62 @@ namespace INFOIBV
             InitializeComponent();
         }
 
-        /*
-         * loadImageButton1_Click: process when user clicks "Load Image-1" button
-         */
         private void LoadImageButton1_Click(object sender, EventArgs e)
         {
-           if (openImageDialog.ShowDialog() == DialogResult.OK)             // open file dialog
+            if (openImageDialog.ShowDialog() == DialogResult.OK)
             {
-                string file = openImageDialog.FileName;                     // get the file name
-                ImageFileName1.Text = file;                                  // show file name
-                InputImage?.Dispose();                                      // reset image
+                string file = openImageDialog.FileName;
+                ImageFileName1.Text = file;
+                InputImage1?.Dispose();
 
-                InputImage = new Bitmap(file);                              // create new Bitmap from file
-                if (InputImage.Size.Height <= 0 || InputImage.Size.Width <= 0 ||
-                    InputImage.Size.Height > 512 || InputImage.Size.Width > 512) // dimension check (may be removed or altered)
+                InputImage1 = new Bitmap(file);
+                if (InputImage1.Size.Height <= 0 || InputImage1.Size.Width <= 0 ||
+                    InputImage1.Size.Height > 512 || InputImage1.Size.Width > 512)
                     MessageBox.Show("Error in image dimensions (have to be > 0 and <= 512)");
                 else
-                    pictureBox1.Image = (Image) InputImage;                 // display input image
+                {
+                    pictureBox1.Image = (Image)InputImage1;
                     Image1.Visible = false;
+                }
             }
         }
 
-        /*
-         * loadImageButton2_Click: process when user clicks "Load Image-2" button
-         */
         private void LoadImage2_Click(object sender, EventArgs e)
         {
-            if (openImageDialog.ShowDialog() == DialogResult.OK)             // open file dialog
+            if (openImageDialog.ShowDialog() == DialogResult.OK)
             {
-                string file = openImageDialog.FileName;                     // get the file name
-                ImageFileName2.Text = file;                                  // show file name
-                InputImage?.Dispose();                                      // reset image
+                string file = openImageDialog.FileName;
+                ImageFileName2.Text = file;
+                InputImage2?.Dispose();
 
-                InputImage = new Bitmap(file);                              // create new Bitmap from file
-                if (InputImage.Size.Height <= 0 || InputImage.Size.Width <= 0 ||
-                    InputImage.Size.Height > 512 || InputImage.Size.Width > 512) // dimension check (may be removed or altered)
+                InputImage2 = new Bitmap(file);
+                if (InputImage2.Size.Height <= 0 || InputImage2.Size.Width <= 0 ||
+                    InputImage2.Size.Height > 512 || InputImage2.Size.Width > 512)
                     MessageBox.Show("Error in image dimensions (have to be > 0 and <= 512)");
                 else
-                    pictureBox2.Image = (Image)InputImage;                 // display input image
+                {
+                    pictureBox2.Image = (Image)InputImage2;
                     Image2.Visible = false;
-
+                }
             }
         }
-
         /*
         * Conver_to_Gray_Click: process when user clicks "Convert to Gray" button
         */
         private void Conver_to_Gray_Click(object sender, EventArgs e)
         {
             
-            if (InputImage == null) return;                                 // get out if no input image
+            if (InputImage1 == null) return;                                 // get out if no input image
             OutputImage?.Dispose();                                         // reset output image
-            OutputImage = new Bitmap(InputImage.Size.Width, InputImage.Size.Height); // create new output image
-            Color[,] ourImage = new Color[InputImage.Size.Width, InputImage.Size.Height]; // create array to speed-up operations (Bitmap functions are very slow)
+            OutputImage = new Bitmap(InputImage1.Size.Width, InputImage1.Size.Height); // create new output image
+            Color[,] ourImage = new Color[InputImage1.Size.Width, InputImage1.Size.Height]; // create array to speed-up operations (Bitmap functions are very slow)
 
             // copy input Bitmap to array            
-            for (int x = 0; x < InputImage.Size.Width; x++)                 // loop over columns
+            for (int x = 0; x < InputImage1.Size.Width; x++)                 // loop over columns
             {
-                for (int y = 0; y < InputImage.Size.Height; y++)            // loop over rows
+                for (int y = 0; y < InputImage1.Size.Height; y++)            // loop over rows
                 {
-                    ourImage[x, y] = InputImage.GetPixel(x, y);              // set pixel color in array at (x,y)
+                    ourImage[x, y] = InputImage1.GetPixel(x, y);              // set pixel color in array at (x,y)
                 }
             }
 
@@ -122,14 +121,14 @@ namespace INFOIBV
             // setup progress bar
             progressBar.Visible = true;
             progressBar.Minimum = 1;
-            progressBar.Maximum = InputImage.Size.Width * InputImage.Size.Height;
+            progressBar.Maximum = InputImage1.Size.Width * InputImage1.Size.Height;
             progressBar.Value = 1;
             progressBar.Step = 1;
 
 
             // process all pixels in the image
-            for (int x = 0; x < InputImage.Size.Width; x++)                 // loop over columns
-                for (int y = 0; y < InputImage.Size.Height; y++)            // loop over rows
+            for (int x = 0; x < InputImage1.Size.Width; x++)                 // loop over columns
+                for (int y = 0; y < InputImage1.Size.Height; y++)            // loop over rows
                 {
                     Color pixelColor = inputImage[x, y];                    // get pixel color
                    
@@ -743,7 +742,7 @@ namespace INFOIBV
             {
                 Bitmap imageBitmap = new Bitmap(pictureBox2.Image);
 
-                Bitmap sharpenedImage = new Bitmap(InputImage.Width, InputImage.Height);
+                Bitmap sharpenedImage = new Bitmap(InputImage1.Width, InputImage1.Height);
 
                 int[,] laplacianKernel = new int[,]
                 {
@@ -755,9 +754,9 @@ namespace INFOIBV
                 int kernelSize = 3;
                 int kernelRadius = kernelSize / 2;
 
-                for (int x = kernelRadius; x < InputImage.Width - kernelRadius; x++)
+                for (int x = kernelRadius; x < InputImage1.Width - kernelRadius; x++)
                 {
-                    for (int y = kernelRadius; y < InputImage.Height - kernelRadius; y++)
+                    for (int y = kernelRadius; y < InputImage1.Height - kernelRadius; y++)
                     {
                         int newPixelValue = ApplyKernel(imageBitmap, x, y, laplacianKernel, kernelSize);
                         sharpenedImage.SetPixel(x, y, Color.FromArgb(newPixelValue, newPixelValue, newPixelValue));
@@ -1116,14 +1115,24 @@ namespace INFOIBV
                         structuringElement[i, j] = 1;
                     }
                 }
+
+                // Debugging: Print the structuring element to the console
+                for (int i = 0; i < structuringElement.GetLength(0); i++)
+                {
+                    for (int j = 0; j < structuringElement.GetLength(1); j++)
+                    {
+                        Console.Write(structuringElement[i, j] + " ");
+                    }
+                    Console.WriteLine();
+                }
             }
             else
             {
                 throw new ArgumentException("Invalid shape. Supported shapes are 'plus' and 'square'.");
             }
-
             return structuringElement;
         }
+       
 
         private int[,] CreatePlusElement(int size)
         {
@@ -1145,7 +1154,6 @@ namespace INFOIBV
                     }
                 }
             }
-
             return plusElement;
         }
 
@@ -1268,6 +1276,8 @@ namespace INFOIBV
         }
 
 
+
+
         private Bitmap BinaryArrayToBitmap(bool[,] binaryArray)
         {
             int width = binaryArray.GetLength(0);
@@ -1285,7 +1295,6 @@ namespace INFOIBV
 
             return bitmap;
         }
-
         private bool[,] BitmapToBinaryArray(Bitmap image)
         {
             int width = image.Width;
@@ -1297,12 +1306,13 @@ namespace INFOIBV
                 for (int y = 0; y < height; y++)
                 {
                     Color pixelColor = image.GetPixel(x, y);
-                    binaryArray[x, y] = pixelColor.GetBrightness() < 0.5f; // Threshold to consider black or white
+                    binaryArray[x, y] = pixelColor.GetBrightness() >= 0.5f; // Threshold to consider black or white
                 }
             }
 
             return binaryArray;
         }
+
 
         // Grayscale Erosion
         private byte[,] ErodeGrayscaleImage(byte[,] inputImage, int[,] structuringElement)
@@ -1442,49 +1452,45 @@ namespace INFOIBV
         }
 
         // Binary Dilation
-        private bool[,] DilateBinaryImage(bool[,] inputImage, int[,] structuringElement)
+        private bool[,] DilateBinaryImage(bool[,] binaryImage, int[,] structuringElement)
         {
-            int imageWidth = inputImage.GetLength(0);
-            int imageHeight = inputImage.GetLength(1);
+            int width = binaryImage.GetLength(0);
+            int height = binaryImage.GetLength(1);
             int seWidth = structuringElement.GetLength(0);
             int seHeight = structuringElement.GetLength(1);
-            int seOffsetX = seWidth / 2;
-            int seOffsetY = seHeight / 2;
 
-            bool[,] dilatedImage = new bool[imageWidth, imageHeight];
+            bool[,] outputImage = (bool[,])binaryImage.Clone();
 
-            for (int x = 0; x < imageWidth; x++)
+            int offsetX = seWidth / 2;
+            int offsetY = seHeight / 2;
+
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < imageHeight; y++)
+                for (int y = 0; y < height; y++)
                 {
-                    bool maxValue = false; // Initialize as false
-                    for (int i = -seOffsetX; i <= seOffsetX; i++)
+                    if (binaryImage[x, y])
                     {
-                        for (int j = -seOffsetY; j <= seOffsetY; j++)
+                        for (int i = -offsetX; i <= offsetX; i++)
                         {
-                            int pixelX = x + i;
-                            int pixelY = y + j;
-
-                            if (pixelX >= 0 && pixelX < imageWidth && pixelY >= 0 && pixelY < imageHeight)
+                            for (int j = -offsetY; j <= offsetY; j++)
                             {
-                                bool pixelValue = inputImage[pixelX, pixelY];
-                                int seValue = structuringElement[i + seOffsetX, j + seOffsetY];
-                                bool dilatedValue = pixelValue || (seValue == 1);
-                                if (dilatedValue)
+                                if (x + i >= 0 && x + i < width && y + j >= 0 && y + j < height)
                                 {
-                                    maxValue = true;
-                                    break; // No need to check further
+                                    if (structuringElement[i + offsetX, j + offsetY] == 1)
+                                    {
+                                        outputImage[x + i, y + j] = true;
+                                    }
                                 }
                             }
                         }
-                        if (maxValue) break; // No need to check further
                     }
-                    dilatedImage[x, y] = maxValue;
                 }
             }
 
-            return dilatedImage;
+            return outputImage;
         }
+
+
 
         // Grayscale Opening
         private byte[,] OpenGrayscaleImage(byte[,] inputImage, int[,] structuringElement)
@@ -1571,6 +1577,7 @@ namespace INFOIBV
             return result;
         }
 
+
         private bool[,] OrImages(bool[,] image1, bool[,] image2)
         {
             int width = image1.GetLength(0);
@@ -1593,7 +1600,6 @@ namespace INFOIBV
 
             return result;
         }
-
 
         private void AND_BinaryImage_Click_1(object sender, EventArgs e)
         {
@@ -1651,28 +1657,30 @@ namespace INFOIBV
             }
         }
 
-        /* private void DisplayBinaryArray(bool[,] binaryArray, PictureBox pictureBox)
-         {
-             int width = binaryArray.GetLength(0);
-             int height = binaryArray.GetLength(1);
-             Bitmap resultBitmap = new Bitmap(width, height);
 
-             for (int x = 0; x < width; x++)
-             {
-                 for (int y = 0; y < height; y++)
-                 {
-                     Color pixelColor = binaryArray[x, y] ? Color.Black : Color.White;
-                     resultBitmap.SetPixel(x, y, pixelColor);
-                 }
-             }
 
-             pictureBox.Image = resultBitmap;
-             pictureBox.Refresh();
-         }*/
 
+
+        private void ShowScrollableMessage(string message)
+        {
+            Form messageForm = new Form();
+            messageForm.Width = 400;
+            messageForm.Height = 600;
+            messageForm.Text = "Histogram Values";
+
+            TextBox messageTextBox = new TextBox();
+            messageTextBox.Multiline = true;
+            messageTextBox.ScrollBars = ScrollBars.Vertical;
+            messageTextBox.Dock = DockStyle.Fill;
+            messageTextBox.ReadOnly = true;
+            messageTextBox.Text = message;
+
+            messageForm.Controls.Add(messageTextBox);
+            messageForm.ShowDialog();
+        }
         private void CountValues_Click(object sender, EventArgs e)
         {
-            // Assuming the grayscale image is in pictureBox2
+            
             Bitmap grayscaleImage = new Bitmap(pictureBox2.Image);
 
             // Compute the histogram of the grayscale image
@@ -1694,92 +1702,141 @@ namespace INFOIBV
                     histogramValues.AppendLine($"Value: {i}, Occurrences: {histogram[i]}");
                 }
             }
-            MessageBox.Show(histogramValues.ToString());
+
+            // Use the new method to display the histogram values
+            ShowScrollableMessage(histogramValues.ToString());
         }
+
+        private void DrawBoundary(Bitmap image, List<(int, int)> boundary)
+        {
+            foreach (var point in boundary)
+            {
+                int x = point.Item1;
+                int y = point.Item2;
+
+                // Draw the main pixel
+                image.SetPixel(x, y, Color.Red);
+
+                // Draw surrounding pixels for thickness
+                if (x > 0) image.SetPixel(x - 1, y, Color.Red);
+                if (x < image.Width - 1) image.SetPixel(x + 1, y, Color.Red);
+                if (y > 0) image.SetPixel(x, y - 1, Color.Red);
+                if (y < image.Height - 1) image.SetPixel(x, y + 1, Color.Red);
+            }
+        }
+  
+        private List<(int, int)> Floodfill(Bitmap image)
+        {
+            List<(int, int)> boundary = new List<(int, int)>();
+
+            for (int y = 0; y < image.Height; y++)
+            {
+                for (int x = 0; x < image.Width; x++)
+                {
+                    Color pixel = image.GetPixel(x, y);
+                    if (pixel.R == 255 && pixel.G == 255 && pixel.B == 255) // Check if the pixel is white
+                    {
+                        boundary.Add((x, y));
+                    }
+                }
+            }
+
+            return boundary;
+        }
+
         private void traceBoundary_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image == null)
             {
-                MessageBox.Show("Please load a binary image first.");
+                MessageBox.Show("Please load an image first.");
                 return;
             }
 
-            bool[,] binaryImage = BitmapToBinaryArray(new Bitmap(pictureBox1.Image));
-            List<(int, int)> boundary = TraceBoundary(binaryImage);
+            Bitmap inputBitmap = new Bitmap(pictureBox1.Image);
+            List<(int, int)> boundary = Floodfill(inputBitmap);
 
             // For visualization: Draw the boundary on the image
-            Bitmap boundaryImage = new Bitmap(pictureBox1.Image);
-            foreach (var point in boundary)
-            {
-                boundaryImage.SetPixel(point.Item1, point.Item2, Color.Red); // marking boundary with red color
-            }
+            Bitmap boundaryImage = new Bitmap(inputBitmap);
+            DrawBoundary(boundaryImage, boundary);
             pictureBox1.Image = boundaryImage;
             pictureBox1.Refresh();
 
             MessageBox.Show($"Boundary traced with {boundary.Count} points!");
         }
 
-        private List<(int, int)> TraceBoundary(bool[,] binaryImage)
+        private List<(int, int)> TraceBoundaryOuter(Bitmap image)
         {
-            int width = binaryImage.GetLength(0);
-            int height = binaryImage.GetLength(1);
             List<(int, int)> boundary = new List<(int, int)>();
 
-            // Find the starting point
-            (int, int)? start = null;
-            for (int y = 0; y < height && start == null; y++)
+            // Horizontal scan (left and right boundaries)
+            for (int y = 0; y < image.Height; y++)
             {
-                for (int x = 0; x < width && start == null; x++)
+                bool previousPixelWhite = false;
+
+                for (int x = 0; x < image.Width; x++)
                 {
-                    if (binaryImage[x, y])
+                    Color pixel = image.GetPixel(x, y);
+                    bool currentPixelWhite = (pixel.R == 255 && pixel.G == 255 && pixel.B == 255);
+
+                    if (currentPixelWhite && !previousPixelWhite) // Transition from black to white
                     {
-                        start = (x, y);
+                        boundary.Add((x, y));
                     }
+                    else if (!currentPixelWhite && previousPixelWhite) // Transition from white to black
+                    {
+                        boundary.Add((x - 1, y));
+                    }
+
+                    previousPixelWhite = currentPixelWhite;
                 }
             }
 
-            if (start == null)
+            // Vertical scan (top and bottom boundaries)
+            for (int x = 0; x < image.Width; x++)
             {
-                MessageBox.Show("No foreground pixel found in the image.");
-                return boundary;
-            }
+                bool previousPixelWhite = false;
 
-            int[] dx = { 0, 1, 1, 1, 0, -1, -1, -1 };
-            int[] dy = { -1, -1, 0, 1, 1, 1, 0, -1 };
-            int dir = 0; // Start direction
-            (int, int) pos = start.Value;
-
-            int maxIterations = width * height; // Safety measure
-            int iterations = 0;
-
-            do
-            {
-                boundary.Add(pos);
-                for (int i = 0; i < 8; i++)
+                for (int y = 0; y < image.Height; y++)
                 {
-                    int newX = pos.Item1 + dx[(dir + i) % 8];
-                    int newY = pos.Item2 + dy[(dir + i) % 8];
-                    if (newX >= 0 && newX < width && newY >= 0 && newY < height && binaryImage[newX, newY])
+                    Color pixel = image.GetPixel(x, y);
+                    bool currentPixelWhite = (pixel.R == 255 && pixel.G == 255 && pixel.B == 255);
+
+                    if (currentPixelWhite && !previousPixelWhite) // Transition from black to white
                     {
-                        pos = (newX, newY);
-                        dir = (dir + i) % 8;
-                        break;
+                        boundary.Add((x, y));
                     }
-                }
+                    else if (!currentPixelWhite && previousPixelWhite) // Transition from white to black
+                    {
+                        boundary.Add((x, y - 1));
+                    }
 
-                iterations++;
-                if (iterations > maxIterations)
-                {
-                    MessageBox.Show("Boundary tracing exceeded the maximum number of iterations. Aborting.");
-                    return boundary;
+                    previousPixelWhite = currentPixelWhite;
                 }
-            } while (pos != start.Value);
+            }
 
             return boundary;
         }
 
 
+        private void Real_traceBoundary_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image == null)
+            {
+                MessageBox.Show("Please load an image first.");
+                return;
+            }
 
+            Bitmap inputBitmap = new Bitmap(pictureBox1.Image);
+            List<(int, int)> boundary = TraceBoundaryOuter(inputBitmap);
+
+            // For visualization: Draw the boundary on the image
+            Bitmap boundaryImage = new Bitmap(inputBitmap);
+            DrawBoundary(boundaryImage, boundary);
+            pictureBox1.Image = boundaryImage;
+            pictureBox1.Refresh();
+
+            MessageBox.Show($"Boundary traced with {boundary.Count} points!");
+        }
 
 
         // ====================================================================
