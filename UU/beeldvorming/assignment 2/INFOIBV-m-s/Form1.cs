@@ -1026,254 +1026,294 @@ namespace INFOIBV
         // ============= YOUR FUNCTIONS FOR ASSIGNMENT 2 GO HERE ==============
         // ====================================================================
 
+        //Structuring element
+        private Bitmap createStructuringElement(string shape, int size)
+        {
+            Bitmap bmp = new Bitmap(size, size);
+
+            if (shape == "Square")
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    for (int x = 0; x < size; x++)
+                    {
+                        bmp.SetPixel(x, y, Color.Black); // 1
+                    }
+                }
+            }
+            else if (shape == "Plus")
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    for (int x = 0; x < size; x++)
+                    {
+                        if (x == size / 2 || y == size / 2)
+                        {
+                            bmp.SetPixel(x, y, Color.Black); // 1
+                        }
+                        else
+                        {
+                            bmp.SetPixel(x, y, Color.White); // 0
+                        }
+                    }
+                }
+            }
+
+            return bmp;
+        }
+
         private void StructureElementBuildButton_Click(object sender, EventArgs e)
         {
-            // Check if an item is selected in the ListBox
-            if (SetStrucElemShape.SelectedItem != null)
+            string shape = SetStrucElemShape.SelectedItem.ToString();
+            int size = (int)StrucElemSize.Value;
+
+            if (size != 3 && size != 5 && size != 7 && size != 9 && size != 11)
             {
-                // Get the selected shape from the ListBox
-                string selectedShape = SetStrucElemShape.SelectedItem.ToString();
-
-                // Get the selected size from the DomainUpDown control
-                int selectedSize = Convert.ToInt32(StrucElemSize.Text);
-
-                // Create the structuring element based on shape and size
-                int[,] structuringElement = StructuringElementBuild(selectedShape, selectedSize);
-
-                // Assign the computed structuringElement to the class-level variable
-                this.structuringElement = structuringElement;
-
-                // Visualize and display the structuring element
-                VisualizeStructuringElement(structuringElement);
+                MessageBox.Show("Invalid size selected. Please choose 3, 5, 7, 9 or 11.");
+                return;
             }
-            else
-            {
-                // Handle the case where no item is selected in the ListBox (e.g., display an error message)
-                MessageBox.Show("Please select a shape from the list.");
-            }
+
+            Bitmap result = createStructuringElement(shape, size);
+            pictureBox3.Image = result;
+
+            // Print the structuring element to the console
+            PrintStructuringElementToConsole(result);
         }
 
 
-        private int[,] StructuringElementBuild(string shape, int size)
+        //Erosion/Dilation
+        private Bitmap ErodeImage(Bitmap source, Bitmap structElem)
         {
-            int elementSize = size;
-            int[,] structuringElement;
-            
-            //DomainUpDown strucElemSize = StrucElemSize; // Initialize the control
+            Bitmap erodedImage = new Bitmap(source.Width, source.Height);
 
+            bool isBinary = IsBinaryImage(source);
 
-            if (shape.ToLower() == "plus")
+            for (int y = 0; y < source.Height; y++)
             {
-                int plusSize = 3;
-                int[,] basePlusElement = CreatePlusElement(plusSize);
-
-                // Initialize the structuring element with the base plus element
-                structuringElement = basePlusElement;
-
-                // Perform iterative dilation to obtain the desired size
-                while (elementSize > plusSize)
+                for (int x = 0; x < source.Width; x++)
                 {
-                    int newElementSize = plusSize + 2;
-                    int[,] newPlusElement = CreatePlusElement(newElementSize);
-
-                    // Create a new structuring element with the updated size
-                    int[,] newStructuringElement = new int[newElementSize, newElementSize];
-
-                    // Copy the values from the current structuring element to the new one
-                    for (int i = 0; i < plusSize; i++)
+                    if (isBinary)
                     {
-                        for (int j = 0; j < plusSize; j++)
+                        bool isEroded = false;
+
+                        for (int seY = 0; seY < structElem.Height && !isEroded; seY++)
                         {
-                            newStructuringElement[i + 1, j + 1] = structuringElement[i, j];
+                            for (int seX = 0; seX < structElem.Width && !isEroded; seX++)
+                            {
+                                if (structElem.GetPixel(seX, seY).R == 0)
+                                {
+                                    int imageX = x + seX - structElem.Width / 2;
+                                    int imageY = y + seY - structElem.Height / 2;
+
+                                    if (imageX >= 0 && imageY >= 0 && imageX < source.Width && imageY < source.Height)
+                                    {
+                                        if (source.GetPixel(imageX, imageY).R == 0)
+                                        {
+                                            isEroded = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (isEroded)
+                        {
+                            erodedImage.SetPixel(x, y, Color.Black);
+                        }
+                        else
+                        {
+                            erodedImage.SetPixel(x, y, Color.White);
                         }
                     }
-
-                    // Merge the current structuring element with the new plus element
-                    for (int i = 0; i < newElementSize; i++)
+                    else // Grayscale erosion
                     {
-                        for (int j = 0; j < newElementSize; j++)
+                        int minValue = 255;
+
+                        for (int seY = 0; seY < structElem.Height; seY++)
                         {
-                            int currentValue = newStructuringElement[i, j];
-                            int newValue = currentValue | newPlusElement[i, j];
-                            newStructuringElement[i, j] = newValue;
+                            for (int seX = 0; seX < structElem.Width; seX++)
+                            {
+                                if (structElem.GetPixel(seX, seY).R == 0)
+                                {
+                                    int imageX = x + seX - structElem.Width / 2;
+                                    int imageY = y + seY - structElem.Height / 2;
+
+                                    if (imageX >= 0 && imageY >= 0 && imageX < source.Width && imageY < source.Height)
+                                    {
+                                        int pixelValue = source.GetPixel(imageX, imageY).R;
+                                        minValue = Math.Min(minValue, pixelValue);
+                                    }
+                                }
+                            }
                         }
-                    }
 
-                    // Update the structuring element and size for the next iteration
-                    structuringElement = newStructuringElement;
-                    plusSize = newElementSize;
-                }
-            }
-            else if (shape.ToLower() == "square")
-            {
-                // Create a square-shaped structuring element
-                structuringElement = new int[elementSize, elementSize];
-                for (int i = 0; i < elementSize; i++)
-                {
-                    for (int j = 0; j < elementSize; j++)
-                    {
-                        structuringElement[i, j] = 1;
-                    }
-                }
-
-                // Debugging: Print the structuring element to the console
-                for (int i = 0; i < structuringElement.GetLength(0); i++)
-                {
-                    for (int j = 0; j < structuringElement.GetLength(1); j++)
-                    {
-                        Console.Write(structuringElement[i, j] + " ");
-                    }
-                    Console.WriteLine();
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Invalid shape. Supported shapes are 'plus' and 'square'.");
-            }
-            return structuringElement;
-        }
-       
-
-        private int[,] CreatePlusElement(int size)
-        {
-            int plusSize = size;
-            int[,] plusElement = new int[plusSize, plusSize];
-
-            // Create a plus-shaped structuring element
-            for (int i = 0; i < plusSize; i++)
-            {
-                for (int j = 0; j < plusSize; j++)
-                {
-                    if (i == plusSize / 2 || j == plusSize / 2)
-                    {
-                        plusElement[i, j] = 1;
-                    }
-                    else
-                    {
-                        plusElement[i, j] = 0;
+                        erodedImage.SetPixel(x, y, Color.FromArgb(minValue, minValue, minValue));
                     }
                 }
             }
-            return plusElement;
+
+            return erodedImage;
         }
 
-        private void VisualizeStructuringElement(int[,] structuringElement)
+        private bool IsBinaryImage(Bitmap img)
         {
-            int seWidth = structuringElement.GetLength(0);
-            int seHeight = structuringElement.GetLength(1);
-
-            // Create a bitmap to draw the structuring element
-            Bitmap seBitmap = new Bitmap(seWidth * 20, seHeight * 20); // Adjust the scale as needed
-
-            using (Graphics g = Graphics.FromImage(seBitmap))
+            for (int y = 0; y < img.Height; y++)
             {
-                g.Clear(Color.Black); // Clear with a white background
-
-                // Calculate the size of each cell for visualization
-                int cellWidth = seBitmap.Width / seWidth;
-                int cellHeight = seBitmap.Height / seHeight;
-
-                // Draw the structuring element
-                for (int x = 0; x < seWidth; x++)
+                for (int x = 0; x < img.Width; x++)
                 {
-                    for (int y = 0; y < seHeight; y++)
+                    Color pixel = img.GetPixel(x, y);
+                    if (pixel.R != 0 && pixel.R != 255)
                     {
-                        if (structuringElement[x, y] != 0)
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private Bitmap DilateImage(Bitmap source, Bitmap structElem)
+        {
+            Bitmap dilatedImage = new Bitmap(source.Width, source.Height);
+            bool isBinary = IsBinaryImage(source);
+
+            for (int y = 0; y < source.Height; y++)
+            {
+                for (int x = 0; x < source.Width; x++)
+                {
+                    if (isBinary)
+                    {
+                        bool isDilated = false;
+
+                        for (int seY = 0; seY < structElem.Height && !isDilated; seY++)
                         {
-                            // Draw a filled rectangle for each non-zero element
-                            g.FillRectangle(Brushes.White, x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+                            for (int seX = 0; seX < structElem.Width && !isDilated; seX++)
+                            {
+                                if (structElem.GetPixel(seX, seY).R == 0)
+                                {
+                                    int imageX = x + seX - structElem.Width / 2;
+                                    int imageY = y + seY - structElem.Height / 2;
+
+                                    if (imageX >= 0 && imageY >= 0 && imageX < source.Width && imageY < source.Height)
+                                    {
+                                        if (source.GetPixel(imageX, imageY).R == 255)
+                                        {
+                                            isDilated = true;
+                                        }
+                                    }
+                                }
+                            }
                         }
+
+                        if (isDilated)
+                        {
+                            dilatedImage.SetPixel(x, y, Color.White);
+                        }
+                        else
+                        {
+                            dilatedImage.SetPixel(x, y, Color.Black);
+                        }
+                    }
+                    else // Grayscale dilation
+                    {
+                        int maxValue = 0;
+
+                        for (int seY = 0; seY < structElem.Height; seY++)
+                        {
+                            for (int seX = 0; seX < structElem.Width; seX++)
+                            {
+                                if (structElem.GetPixel(seX, seY).R == 0)
+                                {
+                                    int imageX = x + seX - structElem.Width / 2;
+                                    int imageY = y + seY - structElem.Height / 2;
+
+                                    if (imageX >= 0 && imageY >= 0 && imageX < source.Width && imageY < source.Height)
+                                    {
+                                        int pixelValue = source.GetPixel(imageX, imageY).R;
+                                        maxValue = Math.Max(maxValue, pixelValue);
+                                    }
+                                }
+                            }
+                        }
+
+                        dilatedImage.SetPixel(x, y, Color.FromArgb(maxValue, maxValue, maxValue));
                     }
                 }
             }
 
-            // Display the structuring element in pictureBox3
-            pictureBox3.Image = seBitmap;
-            pictureBox3.Refresh();
+            return dilatedImage;
+        }
+
+        private Bitmap OpenImage(Bitmap source, Bitmap structElem)
+        {
+            Bitmap temp = ErodeImage(source, structElem);
+            return DilateImage(temp, structElem);
+        }
+
+        private Bitmap CloseImage(Bitmap source, Bitmap structElem)
+        {
+            Bitmap temp = DilateImage(source, structElem);
+            return ErodeImage(temp, structElem);
         }
 
         private void DoSelectedFunction_Click(object sender, EventArgs e)
-        {
-            // Determine the selected function from the ListBox
-            string selectedFunction;
+        {             
+            // 1. Get the selected structuring element
+            string shape = SetStrucElemShape.SelectedItem.ToString();
+            int size = (int)StrucElemSize.Value;
+            Bitmap structElem = createStructuringElement(shape, size);
+            
+            // 2. Get the selected operation
+            string operation = FunctionList.SelectedItem.ToString();
 
-            selectedFunction = (string)FunctionList.SelectedItem;
+            // 3. Apply the operation
+            Bitmap sourceImage = (Bitmap)pictureBox2.Image.Clone();
+            Bitmap resultImage;
 
-            //if (!string.IsNullOrEmpty(selectedFunction)) 
-            //{
-            //    selectedFunction= "Erode";
-            //}
-
-            if ((pictureBox2.Image != null) && (structuringElement != null))
+            switch (operation)
             {
-                Bitmap inputImageBitmap = new Bitmap(pictureBox2.Image);
-
-
-                if (IsBinaryImage(inputImageBitmap))
-                {
-                    // Binary Image
-                    bool[,] binaryImageArray = BitmapToBinaryArray(inputImageBitmap);
-
-                    switch (selectedFunction)
-                    {
-                        case "Erode":
-                            pictureBox2.Image = BinaryArrayToBitmap(ErodeBinaryImage(binaryImageArray, structuringElement));
-                            break;
-
-                        case "Dilate":
-                            pictureBox2.Image = BinaryArrayToBitmap(DilateBinaryImage(binaryImageArray, structuringElement));
-                            break;
-
-                        case "Open":
-                            pictureBox2.Image = BinaryArrayToBitmap(OpenBinaryImage(binaryImageArray, structuringElement));
-                            break;
-
-                        case "Close":
-                            pictureBox2.Image = BinaryArrayToBitmap(CloseBinaryImage(binaryImageArray, structuringElement));
-                            break;
-
-                        default:
-                            // Handle unsupported function
-                            break;
-                    }
-                }
-                else
-                {
-                    // Grayscale Image
-                    byte[,] grayscaleImageArray = BitmapToByteArray(inputImageBitmap);
-
-                    switch (selectedFunction)
-                    {
-                        case "Erode":
-                            pictureBox2.Image = ByteToBitmap(ErodeGrayscaleImage(grayscaleImageArray, structuringElement));
-                            break;
-
-                        case "Dilate":
-                            pictureBox2.Image = ByteToBitmap(DilateGrayscaleImage(grayscaleImageArray, structuringElement));
-                            break;
-
-                        case "Open":
-                            pictureBox2.Image = ByteToBitmap(OpenGrayscaleImage(grayscaleImageArray, structuringElement));
-                            break;
-
-                        case "Close":
-                            pictureBox2.Image = ByteToBitmap(CloseGrayscaleImage(grayscaleImageArray, structuringElement));
-                            break;
-
-                        default:
-                            // Handle unsupported function
-                            break;
-                    }
-                }
-
-                pictureBox2.Refresh();
+                case "Erode":
+                    resultImage = ErodeImage(sourceImage, structElem);
+                    break;       
+                case "Dilate":
+                    resultImage = DilateImage(sourceImage, structElem);
+                    break;
+                case "Open":
+                    resultImage = OpenImage(sourceImage, structElem);
+                    break;
+                case "Close":
+                    resultImage = CloseImage(sourceImage, structElem);
+                    break;
+                default:
+                    resultImage = sourceImage;
+                    break;
             }
-            else
+
+            // 4. Display the result
+                   
+            pictureBox4.Image = resultImage;
+            pictureBox4.Refresh();
+            return;
+        }
+
+        private void PrintStructuringElementToConsole(Bitmap structElem)
+        {
+            for (int y = 0; y < structElem.Height; y++)
             {
-                // Handle the case where no item is selected in the ListBox (e.g., display an error message)
-                MessageBox.Show("Please load an image and use some functions to get another image or build a structring element or select a function from list");
+                for (int x = 0; x < structElem.Width; x++)
+                {
+                    if (structElem.GetPixel(x, y).R == 0) // Black pixel
+                    {
+                        Console.Write("1");
+                    }
+                    else
+                    {
+                        Console.Write("0");
+                    }
+                }
+                Console.WriteLine(); // Move to the next line after each row
             }
         }
+
 
 
 
@@ -1311,247 +1351,6 @@ namespace INFOIBV
             }
 
             return binaryArray;
-        }
-
-
-        // Grayscale Erosion
-        private byte[,] ErodeGrayscaleImage(byte[,] inputImage, int[,] structuringElement)
-        {
-            int imageWidth = inputImage.GetLength(0);
-            int imageHeight = inputImage.GetLength(1);
-            int seWidth = structuringElement.GetLength(0);
-            int seHeight = structuringElement.GetLength(1);
-            int seOffsetX = seWidth / 2;
-            int seOffsetY = seHeight / 2;
-
-            byte[,] erodedImage = new byte[imageWidth, imageHeight];
-
-            for (int x = 0; x < imageWidth; x++)
-            {
-                for (int y = 0; y < imageHeight; y++)
-                {
-                    byte minValue = 255; // Initialize with the maximum possible value
-                    for (int i = -seOffsetX; i <= seOffsetX; i++)
-                    {
-                        for (int j = -seOffsetY; j <= seOffsetY; j++)
-                        {
-                            int pixelX = x + i;
-                            int pixelY = y + j;
-
-                            if (pixelX >= 0 && pixelX < imageWidth && pixelY >= 0 && pixelY < imageHeight)
-                            {
-                                byte pixelValue = inputImage[pixelX, pixelY];
-                                int seValue = structuringElement[i + seOffsetX, j + seOffsetY];
-                                byte erodedValue = (byte)(pixelValue - seValue);
-                                if (erodedValue < minValue)
-                                {
-                                    minValue = erodedValue;
-                                }
-                            }
-                        }
-                    }
-                    erodedImage[x, y] = minValue;
-                }
-            }
-
-            return erodedImage;
-        }
-
-        // Grayscale Dilation
-        private byte[,] DilateGrayscaleImage(byte[,] inputImage, int[,] structuringElement)
-        {
-            int imageWidth = inputImage.GetLength(0);
-            int imageHeight = inputImage.GetLength(1);
-            int seWidth = structuringElement.GetLength(0);
-            int seHeight = structuringElement.GetLength(1);
-            int seOffsetX = seWidth / 2;
-            int seOffsetY = seHeight / 2;
-
-            byte[,] dilatedImage = new byte[imageWidth, imageHeight];
-
-            for (int x = 0; x < imageWidth; x++)
-            {
-                for (int y = 0; y < imageHeight; y++)
-                {
-                    byte maxValue = 0; // Initialize with the minimum possible value
-                    for (int i = -seOffsetX; i <= seOffsetX; i++)
-                    {
-                        for (int j = -seOffsetY; j <= seOffsetY; j++)
-                        {
-                            int pixelX = x + i;
-                            int pixelY = y + j;
-
-                            if (pixelX >= 0 && pixelX < imageWidth && pixelY >= 0 && pixelY < imageHeight)
-                            {
-                                byte pixelValue = inputImage[pixelX, pixelY];
-                                int seValue = structuringElement[i + seOffsetX, j + seOffsetY];
-                                byte dilatedValue = (byte)(pixelValue + seValue);
-                                if (dilatedValue > maxValue)
-                                {
-                                    maxValue = dilatedValue;
-                                }
-                            }
-                        }
-                    }
-                    dilatedImage[x, y] = maxValue;
-                }
-            }
-
-            return dilatedImage;
-        }
-
-        // Binary Erosion
-        private bool[,] ErodeBinaryImage(bool[,] inputImage, int[,] structuringElement)
-        {
-            int imageWidth = inputImage.GetLength(0);
-            int imageHeight = inputImage.GetLength(1);
-            int seWidth = structuringElement.GetLength(0);
-            int seHeight = structuringElement.GetLength(1);
-            int seOffsetX = seWidth / 2;
-            int seOffsetY = seHeight / 2;
-
-            bool[,] erodedImage = new bool[imageWidth, imageHeight];
-
-            for (int x = 0; x < imageWidth; x++)
-            {
-                for (int y = 0; y < imageHeight; y++)
-                {
-                    bool minValue = true; // Initialize as true
-                    for (int i = -seOffsetX; i <= seOffsetX; i++)
-                    {
-                        for (int j = -seOffsetY; j <= seOffsetY; j++)
-                        {
-                            int pixelX = x + i;
-                            int pixelY = y + j;
-
-                            if (pixelX >= 0 && pixelX < imageWidth && pixelY >= 0 && pixelY < imageHeight)
-                            {
-                                bool pixelValue = inputImage[pixelX, pixelY];
-                                int seValue = structuringElement[i + seOffsetX, j + seOffsetY];
-                                bool erodedValue = pixelValue && (seValue == 1);
-                                if (!erodedValue)
-                                {
-                                    minValue = false;
-                                    break; // No need to check further
-                                }
-                            }
-                            else
-                            {
-                                // If any part of the structuring element goes out of bounds, consider it as false
-                                minValue = false;
-                                break; // No need to check further
-                            }
-                        }
-                        if (!minValue) break; // No need to check further
-                    }
-                    erodedImage[x, y] = minValue;
-                }
-            }
-
-            return erodedImage;
-        }
-
-        // Binary Dilation
-        private bool[,] DilateBinaryImage(bool[,] binaryImage, int[,] structuringElement)
-        {
-            int width = binaryImage.GetLength(0);
-            int height = binaryImage.GetLength(1);
-            int seWidth = structuringElement.GetLength(0);
-            int seHeight = structuringElement.GetLength(1);
-
-            bool[,] outputImage = (bool[,])binaryImage.Clone();
-
-            int offsetX = seWidth / 2;
-            int offsetY = seHeight / 2;
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (binaryImage[x, y])
-                    {
-                        for (int i = -offsetX; i <= offsetX; i++)
-                        {
-                            for (int j = -offsetY; j <= offsetY; j++)
-                            {
-                                if (x + i >= 0 && x + i < width && y + j >= 0 && y + j < height)
-                                {
-                                    if (structuringElement[i + offsetX, j + offsetY] == 1)
-                                    {
-                                        outputImage[x + i, y + j] = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return outputImage;
-        }
-
-
-
-        // Grayscale Opening
-        private byte[,] OpenGrayscaleImage(byte[,] inputImage, int[,] structuringElement)
-        {
-            // Opening is erosion followed by dilation
-            byte[,] erodedImage = ErodeGrayscaleImage(inputImage, structuringElement);
-            byte[,] openedImage = DilateGrayscaleImage(erodedImage, structuringElement);
-            return openedImage;
-        }
-
-        // Grayscale Closing
-        private byte[,] CloseGrayscaleImage(byte[,] inputImage, int[,] structuringElement)
-        {
-            // Closing is dilation followed by erosion
-            byte[,] dilatedImage = DilateGrayscaleImage(inputImage, structuringElement);
-            byte[,] closedImage = ErodeGrayscaleImage(dilatedImage, structuringElement);
-            return closedImage;
-        }
-
-        // Binary Opening
-        private bool[,] OpenBinaryImage(bool[,] inputImage, int[,] structuringElement)
-        {
-            // Opening is erosion followed by dilation
-            bool[,] erodedImage = ErodeBinaryImage(inputImage, structuringElement);
-            bool[,] openedImage = DilateBinaryImage(erodedImage, structuringElement);
-            return openedImage;
-        }
-
-        // Binary Closing
-        private bool[,] CloseBinaryImage(bool[,] inputImage, int[,] structuringElement)
-        {
-            // Closing is dilation followed by erosion
-            bool[,] dilatedImage = DilateBinaryImage(inputImage, structuringElement);
-            bool[,] closedImage = ErodeBinaryImage(dilatedImage, structuringElement);
-            return closedImage;
-        }
-
-        private bool IsBinaryImage(Bitmap image)
-        {
-            int width = image.Width;
-            int height = image.Height;
-
-            // Threshold value for distinguishing between binary and grayscale
-            int threshold = 128;
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    Color pixelColor = image.GetPixel(x, y);
-                    int grayValue = (int)(pixelColor.R * 0.299 + pixelColor.G * 0.587 + pixelColor.B * 0.114); // Convert to grayscale
-
-                    // If any pixel value is above the threshold, consider it grayscale
-                    if (grayValue > threshold)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         }
 
         private bool[,] AndImages(bool[,] image1, bool[,] image2)
@@ -1837,6 +1636,8 @@ namespace INFOIBV
 
             MessageBox.Show($"Boundary traced with {boundary.Count} points!");
         }
+
+        
 
 
         // ====================================================================
