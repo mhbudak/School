@@ -470,7 +470,7 @@
             this.AND_BinaryImage.Name = "AND_BinaryImage";
             this.AND_BinaryImage.Size = new System.Drawing.Size(62, 23);
             this.AND_BinaryImage.TabIndex = 37;
-            this.AND_BinaryImage.Text = "OR-B.I.";
+            this.AND_BinaryImage.Text = "AND-B.I.";
             this.AND_BinaryImage.UseVisualStyleBackColor = true;
             this.AND_BinaryImage.Click += new System.EventHandler(this.AND_BinaryImage_Click_1);
             // 
@@ -480,7 +480,7 @@
             this.OR_BinaryImage.Name = "OR_BinaryImage";
             this.OR_BinaryImage.Size = new System.Drawing.Size(62, 23);
             this.OR_BinaryImage.TabIndex = 38;
-            this.OR_BinaryImage.Text = "AND-B.I.";
+            this.OR_BinaryImage.Text = "OR-B.I.";
             this.OR_BinaryImage.UseVisualStyleBackColor = true;
             this.OR_BinaryImage.Click += new System.EventHandler(this.OR_BinaryImage_Click_1);
             // 

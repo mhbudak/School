@@ -1314,151 +1314,103 @@ namespace INFOIBV
             }
         }
 
-
-
-
-
-        private Bitmap BinaryArrayToBitmap(bool[,] binaryArray)
-        {
-            int width = binaryArray.GetLength(0);
-            int height = binaryArray.GetLength(1);
-            Bitmap bitmap = new Bitmap(width, height);
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    Color pixelColor = binaryArray[x, y] ? Color.Black : Color.White;
-                    bitmap.SetPixel(x, y, pixelColor);
-                }
-            }
-
-            return bitmap;
-        }
-        private bool[,] BitmapToBinaryArray(Bitmap image)
-        {
-            int width = image.Width;
-            int height = image.Height;
-            bool[,] binaryArray = new bool[width, height];
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    Color pixelColor = image.GetPixel(x, y);
-                    binaryArray[x, y] = pixelColor.GetBrightness() >= 0.5f; // Threshold to consider black or white
-                }
-            }
-
-            return binaryArray;
-        }
-
-        private bool[,] AndImages(bool[,] image1, bool[,] image2)
-        {
-            int width = image1.GetLength(0);
-            int height = image1.GetLength(1);
-
-            if (image2.GetLength(0) != width || image2.GetLength(1) != height)
-            {
-                throw new ArgumentException("Both images must have the same dimensions.");
-            }
-
-            bool[,] result = new bool[width, height];
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    result[x, y] = image1[x, y] && image2[x, y];
-                }
-            }
-
-            return result;
-        }
-
-
-        private bool[,] OrImages(bool[,] image1, bool[,] image2)
-        {
-            int width = image1.GetLength(0);
-            int height = image1.GetLength(1);
-
-            if (image2.GetLength(0) != width || image2.GetLength(1) != height)
-            {
-                throw new ArgumentException("Both images must have the same dimensions.");
-            }
-
-            bool[,] result = new bool[width, height];
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    result[x, y] = image1[x, y] || image2[x, y];
-                }
-            }
-
-            return result;
-        }
-
+        //and & orr functions 
         private void AND_BinaryImage_Click_1(object sender, EventArgs e)
         {
-            try
+            // Check if both pictureBox1 and pictureBox2 have images
+            if (pictureBox1.Image == null || pictureBox2.Image == null)
             {
-                // Check if both pictureBox1 and pictureBox2 have images
-                if (pictureBox1.Image == null || pictureBox2.Image == null)
+                MessageBox.Show("Both images must be loaded before performing the AND operation.");
+                return;
+            }
+
+            // Convert the images in pictureBox1 and pictureBox2 to Bitmaps
+            Bitmap image1 = new Bitmap(pictureBox1.Image);
+            Bitmap image2 = new Bitmap(pictureBox2.Image);
+
+            // Check if the dimensions of the two images match
+            if (image1.Width != image2.Width || image1.Height != image2.Height)
+            {
+                MessageBox.Show("Both images must have the same dimensions to perform the AND operation.");
+                return;
+            }
+
+            // Create a new Bitmap for the result
+            Bitmap result = new Bitmap(image1.Width, image1.Height);
+
+            // Perform the AND operation
+            for (int y = 0; y < image1.Height; y++)
+            {
+                for (int x = 0; x < image1.Width; x++)
                 {
-                    MessageBox.Show("Both images must be loaded before performing the AND operation.");
-                    return;
+                    Color pixel1 = image1.GetPixel(x, y);
+                    Color pixel2 = image2.GetPixel(x, y);
+
+                    if (pixel1.R == 255 && pixel2.R == 255)  // Both pixels are white
+                    {
+                        result.SetPixel(x, y, Color.White); // Set pixel
+                    }
+                    else
+                    {
+                        result.SetPixel(x, y, Color.Black); // Unset pixel
+                    }
                 }
-
-                // Convert the images in pictureBox1 and pictureBox2 to binary arrays
-                bool[,] image1 = BitmapToBinaryArray(new Bitmap(pictureBox1.Image));
-                bool[,] image2 = BitmapToBinaryArray(new Bitmap(pictureBox2.Image));
-
-                // Perform the AND operation on the binary arrays
-                bool[,] result = AndImages(image1, image2);
-
-                // Display the result in pictureBox4
-                pictureBox4.Image = BinaryArrayToBitmap(result);
-                pictureBox4.Refresh();
             }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+
+            // Display the result in pictureBox4
+            pictureBox4.Image = result;
         }
 
         private void OR_BinaryImage_Click_1(object sender, EventArgs e)
         {
-            try
+            // Check if both pictureBox1 and pictureBox2 have images
+            if (pictureBox1.Image == null || pictureBox2.Image == null)
             {
-                // Check if both pictureBox1 and pictureBox2 have images
-                if (pictureBox1.Image == null || pictureBox2.Image == null)
+                MessageBox.Show("Both images must be loaded before performing the OR operation.");
+                return;
+            }
+
+            // Convert the images in pictureBox1 and pictureBox2 to Bitmaps
+            Bitmap image1 = new Bitmap(pictureBox1.Image);
+            Bitmap image2 = new Bitmap(pictureBox2.Image);
+
+            // Check if the dimensions of the two images match
+            if (image1.Width != image2.Width || image1.Height != image2.Height)
+            {
+                MessageBox.Show("Both images must have the same dimensions to perform the OR operation.");
+                return;
+            }
+
+            // Create a new Bitmap for the result
+            Bitmap result = new Bitmap(image1.Width, image1.Height);
+
+            // Perform the OR operation
+            for (int y = 0; y < image1.Height; y++)
+            {
+                for (int x = 0; x < image1.Width; x++)
                 {
-                    MessageBox.Show("Both images must be loaded before performing the OR operation.");
-                    return;
+                    Color pixel1 = image1.GetPixel(x, y);
+                    Color pixel2 = image2.GetPixel(x, y);
+
+                    if (pixel1.R == 255 || pixel2.R == 255)  // If either pixel is white
+                    {
+                        result.SetPixel(x, y, Color.White); // Set pixel
+                    }
+                    else
+                    {
+                        result.SetPixel(x, y, Color.Black); // Unset pixel
+                    }
                 }
-
-                // Convert the images in pictureBox1 and pictureBox2 to binary arrays
-                bool[,] image1 = BitmapToBinaryArray(new Bitmap(pictureBox1.Image));
-                bool[,] image2 = BitmapToBinaryArray(new Bitmap(pictureBox2.Image));
-
-                // Perform the OR operation on the binary arrays
-                bool[,] result = OrImages(image1, image2);
-
-                // Display the result in pictureBox4
-                pictureBox4.Image = BinaryArrayToBitmap(result);
-                pictureBox4.Refresh();
             }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+
+            // Display the result in pictureBox4
+            pictureBox4.Image = result;
         }
 
 
 
 
+        //value count
 
         private void ShowScrollableMessage(string message)
         {
