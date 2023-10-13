@@ -77,6 +77,10 @@
             this.ExtractLargestShapeButton = new System.Windows.Forms.Button();
             this.Floodfill = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
+            this.houghTransform = new System.Windows.Forms.Button();
+            this.peakFinding = new System.Windows.Forms.Button();
+            this.houghLineDetection = new System.Windows.Forms.Button();
+            this.visualizeHoughLineSegments = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -514,10 +518,10 @@
             // 
             // pictureBox4
             // 
-            this.pictureBox4.Location = new System.Drawing.Point(1308, 326);
+            this.pictureBox4.Location = new System.Drawing.Point(1307, 338);
             this.pictureBox4.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(512, 512);
+            this.pictureBox4.Size = new System.Drawing.Size(500, 500);
             this.pictureBox4.TabIndex = 43;
             this.pictureBox4.TabStop = false;
             // 
@@ -589,11 +593,55 @@
             this.label6.TabIndex = 51;
             this.label6.Text = "CountVlaues works on Image-4. Other buttons work on Image-2. ";
             // 
+            // houghTransform
+            // 
+            this.houghTransform.Location = new System.Drawing.Point(546, 192);
+            this.houghTransform.Name = "houghTransform";
+            this.houghTransform.Size = new System.Drawing.Size(157, 70);
+            this.houghTransform.TabIndex = 52;
+            this.houghTransform.Text = "houghTransform";
+            this.houghTransform.UseVisualStyleBackColor = true;
+            this.houghTransform.Click += new System.EventHandler(this.houghTransform_Click);
+            // 
+            // peakFinding
+            // 
+            this.peakFinding.Location = new System.Drawing.Point(714, 192);
+            this.peakFinding.Name = "peakFinding";
+            this.peakFinding.Size = new System.Drawing.Size(171, 70);
+            this.peakFinding.TabIndex = 53;
+            this.peakFinding.Text = "peakFinding";
+            this.peakFinding.UseVisualStyleBackColor = true;
+            this.peakFinding.Click += new System.EventHandler(this.peakFinding_Click);
+            // 
+            // houghLineDetection
+            // 
+            this.houghLineDetection.Location = new System.Drawing.Point(902, 192);
+            this.houghLineDetection.Name = "houghLineDetection";
+            this.houghLineDetection.Size = new System.Drawing.Size(124, 70);
+            this.houghLineDetection.TabIndex = 54;
+            this.houghLineDetection.Text = "houghLineDetection";
+            this.houghLineDetection.UseVisualStyleBackColor = true;
+            this.houghLineDetection.Click += new System.EventHandler(this.houghLineDetection_Click);
+            // 
+            // visualizeHoughLineSegments
+            // 
+            this.visualizeHoughLineSegments.Location = new System.Drawing.Point(546, 269);
+            this.visualizeHoughLineSegments.Name = "visualizeHoughLineSegments";
+            this.visualizeHoughLineSegments.Size = new System.Drawing.Size(157, 39);
+            this.visualizeHoughLineSegments.TabIndex = 55;
+            this.visualizeHoughLineSegments.Text = "visualizeHoughLineSegments";
+            this.visualizeHoughLineSegments.UseVisualStyleBackColor = true;
+            this.visualizeHoughLineSegments.Click += new System.EventHandler(this.visualizeHoughLineSegments_Click);
+            // 
             // INFOIBV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.visualizeHoughLineSegments);
+            this.Controls.Add(this.houghLineDetection);
+            this.Controls.Add(this.peakFinding);
+            this.Controls.Add(this.houghTransform);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.Floodfill);
             this.Controls.Add(this.ExtractLargestShapeButton);
@@ -707,6 +755,10 @@
         private System.Windows.Forms.Button ExtractLargestShapeButton;
         private System.Windows.Forms.Button Floodfill;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button houghTransform;
+        private System.Windows.Forms.Button peakFinding;
+        private System.Windows.Forms.Button houghLineDetection;
+        private System.Windows.Forms.Button visualizeHoughLineSegments;
     }
 }
 
