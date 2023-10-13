@@ -53,7 +53,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.Make_Image_A_button = new System.Windows.Forms.Button();
             this.Make_Image_B_Button = new System.Windows.Forms.Button();
@@ -74,8 +73,10 @@
             this.Image3Label = new System.Windows.Forms.Label();
             this.Image4Label = new System.Windows.Forms.Label();
             this.CountValues = new System.Windows.Forms.Button();
-            this.traceBoundary = new System.Windows.Forms.Button();
             this.Real_traceBoundary = new System.Windows.Forms.Button();
+            this.ExtractLargestShapeButton = new System.Windows.Forms.Button();
+            this.Floodfill = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -110,7 +111,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(13, 70);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 326);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(512, 512);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -146,7 +147,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(531, 70);
+            this.pictureBox2.Location = new System.Drawing.Point(530, 326);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(512, 512);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -165,19 +166,19 @@
             // 
             // Invers
             // 
-            this.Invers.Location = new System.Drawing.Point(589, 3);
+            this.Invers.Location = new System.Drawing.Point(587, 5);
             this.Invers.Name = "Invers";
-            this.Invers.Size = new System.Drawing.Size(31, 23);
+            this.Invers.Size = new System.Drawing.Size(50, 23);
             this.Invers.TabIndex = 7;
-            this.Invers.Text = "Inv";
+            this.Invers.Text = "Inverse";
             this.Invers.UseVisualStyleBackColor = true;
             this.Invers.Click += new System.EventHandler(this.Invers_Click);
             // 
             // Contrast_Adjustment
             // 
-            this.Contrast_Adjustment.Location = new System.Drawing.Point(626, 3);
+            this.Contrast_Adjustment.Location = new System.Drawing.Point(587, 29);
             this.Contrast_Adjustment.Name = "Contrast_Adjustment";
-            this.Contrast_Adjustment.Size = new System.Drawing.Size(55, 23);
+            this.Contrast_Adjustment.Size = new System.Drawing.Size(52, 23);
             this.Contrast_Adjustment.TabIndex = 8;
             this.Contrast_Adjustment.Text = "ContAdj";
             this.Contrast_Adjustment.UseVisualStyleBackColor = true;
@@ -185,7 +186,7 @@
             // 
             // GausFilt
             // 
-            this.GausFilt.Location = new System.Drawing.Point(686, 3);
+            this.GausFilt.Location = new System.Drawing.Point(642, 7);
             this.GausFilt.Margin = new System.Windows.Forms.Padding(2);
             this.GausFilt.Name = "GausFilt";
             this.GausFilt.Size = new System.Drawing.Size(61, 23);
@@ -196,7 +197,7 @@
             // 
             // MedianFilt
             // 
-            this.MedianFilt.Location = new System.Drawing.Point(751, 3);
+            this.MedianFilt.Location = new System.Drawing.Point(707, 7);
             this.MedianFilt.Margin = new System.Windows.Forms.Padding(2);
             this.MedianFilt.Name = "MedianFilt";
             this.MedianFilt.Size = new System.Drawing.Size(63, 23);
@@ -207,7 +208,7 @@
             // 
             // EdgeDed
             // 
-            this.EdgeDed.Location = new System.Drawing.Point(818, 3);
+            this.EdgeDed.Location = new System.Drawing.Point(844, 7);
             this.EdgeDed.Margin = new System.Windows.Forms.Padding(2);
             this.EdgeDed.Name = "EdgeDed";
             this.EdgeDed.Size = new System.Drawing.Size(57, 23);
@@ -218,18 +219,18 @@
             // 
             // Threshold
             // 
-            this.Threshold.Location = new System.Drawing.Point(879, 3);
+            this.Threshold.Location = new System.Drawing.Point(954, 2);
             this.Threshold.Margin = new System.Windows.Forms.Padding(2);
             this.Threshold.Name = "Threshold";
-            this.Threshold.Size = new System.Drawing.Size(44, 23);
+            this.Threshold.Size = new System.Drawing.Size(88, 23);
             this.Threshold.TabIndex = 12;
-            this.Threshold.Text = "Thres";
+            this.Threshold.Text = "Threshold";
             this.Threshold.UseVisualStyleBackColor = true;
             this.Threshold.Click += new System.EventHandler(this.Threshold_Click);
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Location = new System.Drawing.Point(1048, 326);
+            this.pictureBox3.Location = new System.Drawing.Point(1047, 582);
             this.pictureBox3.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(256, 256);
@@ -239,16 +240,16 @@
             // 
             // HistogramButton
             // 
-            this.HistogramButton.Location = new System.Drawing.Point(587, 26);
+            this.HistogramButton.Location = new System.Drawing.Point(775, 7);
             this.HistogramButton.Name = "HistogramButton";
-            this.HistogramButton.Size = new System.Drawing.Size(75, 23);
+            this.HistogramButton.Size = new System.Drawing.Size(64, 23);
             this.HistogramButton.TabIndex = 0;
             this.HistogramButton.Text = "Histogram";
             this.HistogramButton.Click += new System.EventHandler(this.HistogramButton_Click);
             // 
             // HistogramEqualization
             // 
-            this.HistogramEqualization.Location = new System.Drawing.Point(927, 3);
+            this.HistogramEqualization.Location = new System.Drawing.Point(775, 32);
             this.HistogramEqualization.Margin = new System.Windows.Forms.Padding(2);
             this.HistogramEqualization.Name = "HistogramEqualization";
             this.HistogramEqualization.Size = new System.Drawing.Size(59, 23);
@@ -259,7 +260,7 @@
             // 
             // EdgeSharpinnig
             // 
-            this.EdgeSharpinnig.Location = new System.Drawing.Point(990, 3);
+            this.EdgeSharpinnig.Location = new System.Drawing.Point(844, 32);
             this.EdgeSharpinnig.Margin = new System.Windows.Forms.Padding(2);
             this.EdgeSharpinnig.Name = "EdgeSharpinnig";
             this.EdgeSharpinnig.Size = new System.Drawing.Size(74, 23);
@@ -301,7 +302,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1045, 98);
+            this.label4.Location = new System.Drawing.Point(1047, 7);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(305, 13);
             this.label4.TabIndex = 20;
@@ -310,21 +311,12 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(1045, 121);
+            this.label5.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.label5.Location = new System.Drawing.Point(1045, 101);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(431, 13);
+            this.label5.Size = new System.Drawing.Size(363, 13);
             this.label5.TabIndex = 21;
-            this.label5.Text = "Each button works separetly. Convert to Gray and Inv buttons work on the Loaded I" +
-    "mage.";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(1045, 144);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(186, 13);
-            this.label6.TabIndex = 22;
-            this.label6.Text = "Other buttons work on resulted image.";
+            this.label5.Text = "Convert to Gray, Inverse, and Floodfill buttons work on the loaded Image-1. ";
             // 
             // numericUpDown1
             // 
@@ -333,7 +325,7 @@
             0,
             0,
             0});
-            this.numericUpDown1.Location = new System.Drawing.Point(686, 29);
+            this.numericUpDown1.Location = new System.Drawing.Point(642, 32);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             11,
             0,
@@ -355,7 +347,7 @@
             // 
             // Make_Image_A_button
             // 
-            this.Make_Image_A_button.Location = new System.Drawing.Point(1069, 5);
+            this.Make_Image_A_button.Location = new System.Drawing.Point(954, 26);
             this.Make_Image_A_button.Name = "Make_Image_A_button";
             this.Make_Image_A_button.Size = new System.Drawing.Size(88, 21);
             this.Make_Image_A_button.TabIndex = 24;
@@ -365,7 +357,7 @@
             // 
             // Make_Image_B_Button
             // 
-            this.Make_Image_B_Button.Location = new System.Drawing.Point(1163, 5);
+            this.Make_Image_B_Button.Location = new System.Drawing.Point(955, 49);
             this.Make_Image_B_Button.Name = "Make_Image_B_Button";
             this.Make_Image_B_Button.Size = new System.Drawing.Size(87, 21);
             this.Make_Image_B_Button.TabIndex = 25;
@@ -375,7 +367,7 @@
             // 
             // Make_Image_C_button
             // 
-            this.Make_Image_C_button.Location = new System.Drawing.Point(1256, 3);
+            this.Make_Image_C_button.Location = new System.Drawing.Point(955, 75);
             this.Make_Image_C_button.Name = "Make_Image_C_button";
             this.Make_Image_C_button.Size = new System.Drawing.Size(87, 23);
             this.Make_Image_C_button.TabIndex = 26;
@@ -386,7 +378,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(1044, 160);
+            this.label7.Location = new System.Drawing.Point(470, 102);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(565, 13);
             this.label7.TabIndex = 27;
@@ -400,9 +392,9 @@
             0,
             0,
             0});
-            this.StrucElemSize.Location = new System.Drawing.Point(1049, 226);
+            this.StrucElemSize.Location = new System.Drawing.Point(475, 168);
             this.StrucElemSize.Maximum = new decimal(new int[] {
-            11,
+            99,
             0,
             0,
             0});
@@ -426,14 +418,14 @@
             this.SetStrucElemShape.Items.AddRange(new object[] {
             "Plus",
             "Square"});
-            this.SetStrucElemShape.Location = new System.Drawing.Point(1047, 202);
+            this.SetStrucElemShape.Location = new System.Drawing.Point(473, 144);
             this.SetStrucElemShape.Name = "SetStrucElemShape";
             this.SetStrucElemShape.Size = new System.Drawing.Size(51, 17);
             this.SetStrucElemShape.TabIndex = 29;
             // 
             // StructureElementBuildButton
             // 
-            this.StructureElementBuildButton.Location = new System.Drawing.Point(1047, 177);
+            this.StructureElementBuildButton.Location = new System.Drawing.Point(473, 119);
             this.StructureElementBuildButton.Name = "StructureElementBuildButton";
             this.StructureElementBuildButton.Size = new System.Drawing.Size(51, 23);
             this.StructureElementBuildButton.TabIndex = 34;
@@ -449,14 +441,14 @@
             "Dilate",
             "Open",
             "Close"});
-            this.FunctionList.Location = new System.Drawing.Point(1104, 177);
+            this.FunctionList.Location = new System.Drawing.Point(530, 119);
             this.FunctionList.Name = "FunctionList";
             this.FunctionList.Size = new System.Drawing.Size(109, 17);
             this.FunctionList.TabIndex = 35;
             // 
             // DoSelectedFunction
             // 
-            this.DoSelectedFunction.Location = new System.Drawing.Point(1104, 200);
+            this.DoSelectedFunction.Location = new System.Drawing.Point(530, 142);
             this.DoSelectedFunction.Name = "DoSelectedFunction";
             this.DoSelectedFunction.Size = new System.Drawing.Size(109, 23);
             this.DoSelectedFunction.TabIndex = 36;
@@ -466,7 +458,7 @@
             // 
             // AND_BinaryImage
             // 
-            this.AND_BinaryImage.Location = new System.Drawing.Point(1219, 176);
+            this.AND_BinaryImage.Location = new System.Drawing.Point(645, 118);
             this.AND_BinaryImage.Name = "AND_BinaryImage";
             this.AND_BinaryImage.Size = new System.Drawing.Size(62, 23);
             this.AND_BinaryImage.TabIndex = 37;
@@ -476,7 +468,7 @@
             // 
             // OR_BinaryImage
             // 
-            this.OR_BinaryImage.Location = new System.Drawing.Point(1219, 200);
+            this.OR_BinaryImage.Location = new System.Drawing.Point(645, 142);
             this.OR_BinaryImage.Name = "OR_BinaryImage";
             this.OR_BinaryImage.Size = new System.Drawing.Size(62, 23);
             this.OR_BinaryImage.TabIndex = 38;
@@ -505,7 +497,7 @@
             // Image2
             // 
             this.Image2.AutoSize = true;
-            this.Image2.Location = new System.Drawing.Point(769, 284);
+            this.Image2.Location = new System.Drawing.Point(748, 850);
             this.Image2.Name = "Image2";
             this.Image2.Size = new System.Drawing.Size(45, 13);
             this.Image2.TabIndex = 41;
@@ -514,7 +506,7 @@
             // Image1
             // 
             this.Image1.AutoSize = true;
-            this.Image1.Location = new System.Drawing.Point(214, 284);
+            this.Image1.Location = new System.Drawing.Point(203, 850);
             this.Image1.Name = "Image1";
             this.Image1.Size = new System.Drawing.Size(45, 13);
             this.Image1.TabIndex = 42;
@@ -532,7 +524,7 @@
             // Image3Label
             // 
             this.Image3Label.AutoSize = true;
-            this.Image3Label.Location = new System.Drawing.Point(1146, 438);
+            this.Image3Label.Location = new System.Drawing.Point(1160, 850);
             this.Image3Label.Name = "Image3Label";
             this.Image3Label.Size = new System.Drawing.Size(45, 13);
             this.Image3Label.TabIndex = 44;
@@ -541,7 +533,7 @@
             // Image4Label
             // 
             this.Image4Label.AutoSize = true;
-            this.Image4Label.Location = new System.Drawing.Point(1542, 438);
+            this.Image4Label.Location = new System.Drawing.Point(1540, 850);
             this.Image4Label.Name = "Image4Label";
             this.Image4Label.Size = new System.Drawing.Size(45, 13);
             this.Image4Label.TabIndex = 45;
@@ -549,7 +541,7 @@
             // 
             // CountValues
             // 
-            this.CountValues.Location = new System.Drawing.Point(1287, 177);
+            this.CountValues.Location = new System.Drawing.Point(713, 119);
             this.CountValues.Name = "CountValues";
             this.CountValues.Size = new System.Drawing.Size(80, 23);
             this.CountValues.TabIndex = 46;
@@ -557,19 +549,9 @@
             this.CountValues.UseVisualStyleBackColor = true;
             this.CountValues.Click += new System.EventHandler(this.CountValues_Click);
             // 
-            // traceBoundary
-            // 
-            this.traceBoundary.Location = new System.Drawing.Point(1373, 177);
-            this.traceBoundary.Name = "traceBoundary";
-            this.traceBoundary.Size = new System.Drawing.Size(75, 23);
-            this.traceBoundary.TabIndex = 47;
-            this.traceBoundary.Text = "Floodfill";
-            this.traceBoundary.UseVisualStyleBackColor = true;
-            this.traceBoundary.Click += new System.EventHandler(this.traceBoundary_Click);
-            // 
             // Real_traceBoundary
             // 
-            this.Real_traceBoundary.Location = new System.Drawing.Point(1288, 202);
+            this.Real_traceBoundary.Location = new System.Drawing.Point(714, 144);
             this.Real_traceBoundary.Name = "Real_traceBoundary";
             this.Real_traceBoundary.Size = new System.Drawing.Size(79, 23);
             this.Real_traceBoundary.TabIndex = 48;
@@ -577,13 +559,45 @@
             this.Real_traceBoundary.UseVisualStyleBackColor = true;
             this.Real_traceBoundary.Click += new System.EventHandler(this.Real_traceBoundary_Click);
             // 
+            // ExtractLargestShapeButton
+            // 
+            this.ExtractLargestShapeButton.Location = new System.Drawing.Point(799, 144);
+            this.ExtractLargestShapeButton.Name = "ExtractLargestShapeButton";
+            this.ExtractLargestShapeButton.Size = new System.Drawing.Size(116, 24);
+            this.ExtractLargestShapeButton.TabIndex = 49;
+            this.ExtractLargestShapeButton.Text = "ExtractLargestShape";
+            this.ExtractLargestShapeButton.UseVisualStyleBackColor = true;
+            this.ExtractLargestShapeButton.Click += new System.EventHandler(this.ExtractLargestShapeButton_Click);
+            // 
+            // Floodfill
+            // 
+            this.Floodfill.Location = new System.Drawing.Point(800, 118);
+            this.Floodfill.Name = "Floodfill";
+            this.Floodfill.Size = new System.Drawing.Size(75, 23);
+            this.Floodfill.TabIndex = 50;
+            this.Floodfill.Text = "Floodfill";
+            this.Floodfill.UseVisualStyleBackColor = true;
+            this.Floodfill.Click += new System.EventHandler(this.Floodfill_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.label6.Location = new System.Drawing.Point(1045, 123);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(312, 13);
+            this.label6.TabIndex = 51;
+            this.label6.Text = "CountVlaues works on Image-4. Other buttons work on Image-2. ";
+            // 
             // INFOIBV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.Floodfill);
+            this.Controls.Add(this.ExtractLargestShapeButton);
             this.Controls.Add(this.Real_traceBoundary);
-            this.Controls.Add(this.traceBoundary);
             this.Controls.Add(this.CountValues);
             this.Controls.Add(this.Image4Label);
             this.Controls.Add(this.Image3Label);
@@ -604,7 +618,6 @@
             this.Controls.Add(this.Make_Image_B_Button);
             this.Controls.Add(this.Make_Image_A_button);
             this.Controls.Add(this.numericUpDown1);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -670,7 +683,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Button Make_Image_A_button;
         private System.Windows.Forms.Button Make_Image_B_Button;
@@ -691,8 +703,10 @@
         private System.Windows.Forms.Label Image3Label;
         private System.Windows.Forms.Label Image4Label;
         private System.Windows.Forms.Button CountValues;
-        private System.Windows.Forms.Button traceBoundary;
         private System.Windows.Forms.Button Real_traceBoundary;
+        private System.Windows.Forms.Button ExtractLargestShapeButton;
+        private System.Windows.Forms.Button Floodfill;
+        private System.Windows.Forms.Label label6;
     }
 }
 

@@ -14,6 +14,7 @@ namespace INFOIBV
 {
     public partial class INFOIBV : Form
     {
+
         private Bitmap InputImage1;
         private Bitmap InputImage2;
         private Bitmap OutputImage;
@@ -22,11 +23,18 @@ namespace INFOIBV
         private Bitmap equalizedImage;
         private int[] equalizedHistogram;
         private int[] equalizedCDF;
-        private int[,] structuringElement; // Declare it at the class level
+        private int[,] structuringElement; 
 
         public INFOIBV()
         {
             InitializeComponent();
+
+            // Add Click event handlers for each PictureBox
+            pictureBox1.Click += PictureBox_Click;
+            pictureBox2.Click += PictureBox_Click;
+            pictureBox3.Click += PictureBox_Click;
+            pictureBox4.Click += PictureBox_Click;
+
         }
 
         private void LoadImageButton1_Click(object sender, EventArgs e)
@@ -44,7 +52,7 @@ namespace INFOIBV
                 else
                 {
                     pictureBox1.Image = (Image)InputImage1;
-                    Image1.Visible = false;
+//                    Image1.Visible = false;
                 }
             }
         }
@@ -64,7 +72,7 @@ namespace INFOIBV
                 else
                 {
                     pictureBox2.Image = (Image)InputImage2;
-                    Image2.Visible = false;
+//                    Image2.Visible = false;
                 }
             }
         }
@@ -151,14 +159,51 @@ namespace INFOIBV
             return tempImage;
         }
 
-        /*
-         * saveButton_Click: process when user clicks "Save" button
-         */
+        private PictureBox selectedPictureBox; // Track the selected PictureBox
+
+        private void PictureBox_Click(object sender, EventArgs e)
+        {
+            // Handle the click event for any PictureBox
+            selectedPictureBox = (PictureBox)sender;
+
+            // Optionally, you can visually indicate the selected PictureBox (e.g., change its border color)
+            HighlightSelectedPictureBox();
+        }
+
+        private void HighlightSelectedPictureBox()
+        {
+            // Remove highlighting from all PictureBoxes
+            pictureBox1.BorderStyle = BorderStyle.None;
+            pictureBox2.BorderStyle = BorderStyle.None;
+            pictureBox3.BorderStyle = BorderStyle.None;
+            pictureBox4.BorderStyle = BorderStyle.None;
+
+            // Highlight the selected PictureBox by changing its border color
+            selectedPictureBox.BorderStyle = BorderStyle.FixedSingle;
+        }
+
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            if (pictureBox2.Image == null) return;                                // get out if no output image
+            if (selectedPictureBox == null || selectedPictureBox.Image == null)
+            {
+                MessageBox.Show("Please select an image to save by clicking on a PictureBox.");
+                return;
+            }
+
+            // Show a SaveFileDialog with custom filter and options
+            SaveFileDialog saveImageDialog = new SaveFileDialog();
+            saveImageDialog.Filter = "Image Files|*.png;*.jpg;*.bmp|All Files|*.*";
+            saveImageDialog.Title = "Save Image As";
+            saveImageDialog.FileName = $"Image{selectedPictureBox.Tag}"; // Set a default filename based on the selected PictureBox
+            saveImageDialog.FilterIndex = 1;
+
             if (saveImageDialog.ShowDialog() == DialogResult.OK)
-                pictureBox2.Image.Save(saveImageDialog.FileName);                 // save the output image 
+            {
+                // Save the selected image to the specified location
+                selectedPictureBox.Image.Save(saveImageDialog.FileName);
+
+                MessageBox.Show($"Image{selectedPictureBox.Tag} saved successfully.");
+            }
         }
 
         private void Invers_Click(object sender, EventArgs e)
@@ -209,8 +254,6 @@ namespace INFOIBV
 
         /*
          * invertImage: invert a single channel (grayscale) image
-         * input:   inputImage          single-channel (byte) image
-         * output:                      single-channel (byte) image
          */
         private byte[,] InvertImage(byte[,] inputImage)
         {
@@ -288,8 +331,6 @@ namespace INFOIBV
 
         /*
          * adjustContrast: create an image with the full range of intensity values used
-         * input:   inputImage          single-channel (byte) image
-         * output:                      single-channel (byte) image
          */
         private byte[,] AdjustContrast(byte[,] inputImage)
         {
@@ -525,7 +566,6 @@ namespace INFOIBV
             return result;
         }
 
-
         /*
          * medianFilter: apply median filtering on an input image with a kernel of specified size
          * input:   inputImage          single-channel (byte) image
@@ -588,7 +628,6 @@ namespace INFOIBV
             return outputImage;  // Return the image after applying the median filter.
         }
 
-
         private void MedianFilt_Click(object sender, EventArgs e)
         {
             if (pictureBox2.Image != null)
@@ -612,7 +651,6 @@ namespace INFOIBV
                 pictureBox2.Refresh();
             }
         }
-
 
         /*
          * edgeMagnitude: calculate the image derivative of an input image and a provided edge kernel
@@ -659,6 +697,7 @@ namespace INFOIBV
 
             return result;
         }
+
         private void EdgeDed_Click(object sender, EventArgs e)
         {
             if (pictureBox2.Image != null)
@@ -736,6 +775,7 @@ namespace INFOIBV
                 pictureBox2.Refresh();
             }
         }
+
         private void EdgeSharpinnig_Click(object sender, EventArgs e)
         {
             if (pictureBox2.Image != null)  // Assuming we want to compute the histogram for the image in pictureBox2
@@ -768,30 +808,30 @@ namespace INFOIBV
             }
         }
 
-            private static int ApplyKernel(Bitmap image, int x, int y, int[,] kernel, int kernelSize)
+        private static int ApplyKernel(Bitmap image, int x, int y, int[,] kernel, int kernelSize)
+        {
+            int kernelRadius = kernelSize / 2;
+            int result = 0;
+
+            for (int i = 0; i < kernelSize; i++)
             {
-                int kernelRadius = kernelSize / 2;
-                int result = 0;
-
-                for (int i = 0; i < kernelSize; i++)
+                for (int j = 0; j < kernelSize; j++)
                 {
-                    for (int j = 0; j < kernelSize; j++)
-                    {
-                        int pixelX = x - kernelRadius + i;
-                        int pixelY = y - kernelRadius + j;
+                    int pixelX = x - kernelRadius + i;
+                    int pixelY = y - kernelRadius + j;
 
-                        Color pixelColor = image.GetPixel(pixelX, pixelY);
-                        int grayValue = (int)(pixelColor.R * 0.299 + pixelColor.G * 0.587 + pixelColor.B * 0.114); // Convert to grayscale
+                    Color pixelColor = image.GetPixel(pixelX, pixelY);
+                    int grayValue = (int)(pixelColor.R * 0.299 + pixelColor.G * 0.587 + pixelColor.B * 0.114); // Convert to grayscale
 
-                        result += grayValue * kernel[i, j];
-                    }
+                    result += grayValue * kernel[i, j];
                 }
-
-                // Ensure the result is within the 0-255 range
-                result = Math.Max(0, Math.Min(255, result));
-
-                return result;
             }
+
+            // Ensure the result is within the 0-255 range
+            result = Math.Max(0, Math.Min(255, result));
+
+            return result;
+        }
 
 
         private void HistogramButton_Click(object sender, EventArgs e)
@@ -968,16 +1008,18 @@ namespace INFOIBV
         {
 
         }
+
         private void PictureBox3_Click(object sender, EventArgs e)
         {
 
         }
+
         private void INFOIBV_Load(object sender, EventArgs e)
         {
 
         }
 
-       private void Make_Image_A_button_Click(object sender, EventArgs e)
+        private void Make_Image_A_button_Click(object sender, EventArgs e)
         {
             // First, convert the image to grayscale
             Conver_to_Gray_Click(sender, e);
@@ -1067,21 +1109,13 @@ namespace INFOIBV
             string shape = SetStrucElemShape.SelectedItem.ToString();
             int size = (int)StrucElemSize.Value;
 
-            if (size != 3 && size != 5 && size != 7 && size != 9 && size != 11)
-            {
-                MessageBox.Show("Invalid size selected. Please choose 3, 5, 7, 9 or 11.");
-                return;
-            }
-
             Bitmap result = createStructuringElement(shape, size);
-            pictureBox3.Image = result;
+//            pictureBox3.Image = result;
 
             // Print the structuring element to the console
             PrintStructuringElementToConsole(result);
         }
 
-
-        //Erosion/Dilation
         private Bitmap ErodeImage(Bitmap source, Bitmap structElem)
         {
             Bitmap erodedImage = new Bitmap(source.Width, source.Height);
@@ -1256,7 +1290,15 @@ namespace INFOIBV
         }
 
         private void DoSelectedFunction_Click(object sender, EventArgs e)
-        {             
+        {
+            // Check if sturcture element, pictureBox2 or function is loaded/selected
+
+            if (SetStrucElemShape.SelectedItem.ToString() == null || pictureBox2.Image == null || FunctionList.SelectedItem.ToString() == null)
+            {
+                MessageBox.Show("Check if the structure element is selected, Image2 is loaded, or the desired function is selected.");
+                return;
+            }
+
             // 1. Get the selected structuring element
             string shape = SetStrucElemShape.SelectedItem.ToString();
             int size = (int)StrucElemSize.Value;
@@ -1314,7 +1356,8 @@ namespace INFOIBV
             }
         }
 
-        //and & orr functions 
+        //and & or functions
+
         private void AND_BinaryImage_Click_1(object sender, EventArgs e)
         {
             // Check if both pictureBox1 and pictureBox2 have images
@@ -1360,7 +1403,6 @@ namespace INFOIBV
             // Display the result in pictureBox4
             pictureBox4.Image = result;
         }
-
         private void OR_BinaryImage_Click_1(object sender, EventArgs e)
         {
             // Check if both pictureBox1 and pictureBox2 have images
@@ -1408,10 +1450,7 @@ namespace INFOIBV
         }
 
 
-
-
-        //value count
-
+        //count values
         private void ShowScrollableMessage(string message)
         {
             Form messageForm = new Form();
@@ -1429,10 +1468,11 @@ namespace INFOIBV
             messageForm.Controls.Add(messageTextBox);
             messageForm.ShowDialog();
         }
+
         private void CountValues_Click(object sender, EventArgs e)
         {
             
-            Bitmap grayscaleImage = new Bitmap(pictureBox2.Image);
+            Bitmap grayscaleImage = new Bitmap(pictureBox4.Image);
 
             // Compute the histogram of the grayscale image
             int[] histogram = ComputeHistogram(grayscaleImage);
@@ -1454,7 +1494,14 @@ namespace INFOIBV
                 }
             }
 
-            // Use the new method to display the histogram values
+            // Create a bitmap to draw the histogram on
+            Bitmap histogramBitmap = new Bitmap(256, 256); // Assuming a fixed size of 256x256 for simplicity
+            DrawHistogramOnBitmap(histogram, histogramBitmap);
+
+            // Display the histogram on pictureBox3
+            pictureBox3.Image = histogramBitmap;
+            pictureBox3.Refresh();
+
             ShowScrollableMessage(histogramValues.ToString());
         }
 
@@ -1475,46 +1522,89 @@ namespace INFOIBV
                 if (y < image.Height - 1) image.SetPixel(x, y + 1, Color.Red);
             }
         }
-  
-        private List<(int, int)> Floodfill(Bitmap image)
-        {
-            List<(int, int)> boundary = new List<(int, int)>();
 
-            for (int y = 0; y < image.Height; y++)
+        //floodfill
+        private void Floodfill_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image == null)
             {
-                for (int x = 0; x < image.Width; x++)
+                MessageBox.Show("Please load a binary image in pictureBox1 first.");
+                return;
+            }
+
+            Bitmap binaryImage = new Bitmap(pictureBox1.Image);
+            int[,] labeledImage = FloodFill(binaryImage);
+            Bitmap outputImage = LabeledArrayToBitmap(labeledImage);
+
+            pictureBox1.Image = outputImage;
+            pictureBox1.Refresh();
+        }
+
+        private int[,] FloodFill(Bitmap binaryImage)
+        {
+            int width = binaryImage.Width;
+            int height = binaryImage.Height;
+            int[,] labels = new int[width, height];
+            int labelCounter = 2;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
                 {
-                    Color pixel = image.GetPixel(x, y);
-                    if (pixel.R == 255 && pixel.G == 255 && pixel.B == 255) // Check if the pixel is white
+                    Color pixel = binaryImage.GetPixel(x, y);
+                    if (pixel.R == 255 && labels[x, y] == 0) // If it's a foreground pixel and not labeled yet
                     {
-                        boundary.Add((x, y));
+                        Queue<Point> queue = new Queue<Point>();
+                        queue.Enqueue(new Point(x, y));
+
+                        while (queue.Count > 0)
+                        {
+                            Point current = queue.Dequeue();
+                            if (current.X >= 0 && current.Y >= 0 && current.X < width && current.Y < height && binaryImage.GetPixel(current.X, current.Y).R == 255 && labels[current.X, current.Y] == 0)
+                            {
+                                labels[current.X, current.Y] = labelCounter;
+
+                                queue.Enqueue(new Point(current.X + 1, current.Y));
+                                queue.Enqueue(new Point(current.X - 1, current.Y));
+                                queue.Enqueue(new Point(current.X, current.Y + 1));
+                                queue.Enqueue(new Point(current.X, current.Y - 1));
+                            }
+                        }
+
+                        labelCounter++;
                     }
                 }
             }
 
-            return boundary;
+            return labels;
         }
 
-        private void traceBoundary_Click(object sender, EventArgs e)
+        private Bitmap LabeledArrayToBitmap(int[,] labels)
         {
-            if (pictureBox1.Image == null)
+            int width = labels.GetLength(0);
+            int height = labels.GetLength(1);
+            Bitmap output = new Bitmap(width, height);
+
+            for (int y = 0; y < height; y++)
             {
-                MessageBox.Show("Please load an image first.");
-                return;
+                for (int x = 0; x < width; x++)
+                {
+                    int label = labels[x, y];
+                    if (label == 0)
+                    {
+                        output.SetPixel(x, y, Color.Black);
+                    }
+                    else
+                    {
+                        output.SetPixel(x, y, Color.FromArgb(label * 10 % 255, label * 20 % 255, label * 30 % 255)); // This will give different colors for different labels. Adjust as needed.
+                    }
+                }
             }
 
-            Bitmap inputBitmap = new Bitmap(pictureBox1.Image);
-            List<(int, int)> boundary = Floodfill(inputBitmap);
-
-            // For visualization: Draw the boundary on the image
-            Bitmap boundaryImage = new Bitmap(inputBitmap);
-            DrawBoundary(boundaryImage, boundary);
-            pictureBox1.Image = boundaryImage;
-            pictureBox1.Refresh();
-
-            MessageBox.Show($"Boundary traced with {boundary.Count} points!");
+            return output;
         }
 
+        //traceboundary
         private List<(int, int)> TraceBoundaryOuter(Bitmap image)
         {
             List<(int, int)> boundary = new List<(int, int)>();
@@ -1568,7 +1658,6 @@ namespace INFOIBV
             return boundary;
         }
 
-
         private void Real_traceBoundary_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image == null)
@@ -1589,7 +1678,83 @@ namespace INFOIBV
             MessageBox.Show($"Boundary traced with {boundary.Count} points!");
         }
 
+        //ExtractLargestShapeButton
+        private void ExtractLargestShapeButton_Click(object sender, EventArgs e)
+        {
+            if (pictureBox2.Image == null)
+            {
+                MessageBox.Show("Please load a thresholded binary image in pictureBox2 first.");
+                return;
+            }
+
+            Bitmap binaryImage = new Bitmap(pictureBox2.Image);
+            Bitmap largestShapeImage = ExtractLargestShape(binaryImage);
+            pictureBox4.Image = largestShapeImage;
+            pictureBox4.Refresh();
+        }
         
+        private Bitmap ExtractLargestShape(Bitmap binaryImage)
+        {
+            // Step 1: Connected Components Labeling
+            int currentLabel = 0;
+            Dictionary<int, int> labelSizes = new Dictionary<int, int>();
+            int[,] labels = new int[binaryImage.Width, binaryImage.Height];
+            for (int y = 0; y < binaryImage.Height; y++)
+            {
+                for (int x = 0; x < binaryImage.Width; x++)
+                {
+                    if (binaryImage.GetPixel(x, y).R == 255 && labels[x, y] == 0) // If it's a white pixel and not yet labeled
+                    {
+                        currentLabel++;
+                        int size = DFS(binaryImage, x, y, currentLabel, labels);
+                        labelSizes[currentLabel] = size;
+                    }
+                }
+            }
+
+            // Step 2: Find the label with the maximum count
+            int largestLabel = labelSizes.OrderByDescending(pair => pair.Value).First().Key;
+
+            // Step 3: Extract Largest Shape
+            Bitmap largestShape = new Bitmap(binaryImage.Width, binaryImage.Height);
+            for (int y = 0; y < binaryImage.Height; y++)
+            {
+                for (int x = 0; x < binaryImage.Width; x++)
+                {
+                    largestShape.SetPixel(x, y, labels[x, y] == largestLabel ? Color.White : Color.Black);
+                }
+            }
+
+            return largestShape;
+        }
+
+        private int DFS(Bitmap image, int x, int y, int label, int[,] labels)
+        {
+            Stack<Point> stack = new Stack<Point>();
+            stack.Push(new Point(x, y));
+            int size = 0;
+
+            while (stack.Count > 0)
+            {
+                Point current = stack.Pop();
+
+                if (current.X < 0 || current.Y < 0 || current.X >= image.Width || current.Y >= image.Height || labels[current.X, current.Y] != 0 || image.GetPixel(current.X, current.Y).R != 255)
+                    continue;
+
+                labels[current.X, current.Y] = label;
+                size++;
+
+                stack.Push(new Point(current.X - 1, current.Y));
+                stack.Push(new Point(current.X + 1, current.Y));
+                stack.Push(new Point(current.X, current.Y - 1));
+                stack.Push(new Point(current.X, current.Y + 1));
+            }
+
+            return size;
+        }
+
+       
+
 
 
         // ====================================================================
