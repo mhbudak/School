@@ -1799,24 +1799,28 @@ namespace INFOIBV
             // Convert the Hough array to a Bitmap for visualization
             Bitmap houghBitmap = new Bitmap(181, 2 * maxRadius);
             int maxHoughValue = houghArray.Cast<int>().Max();
+            int minHoughValue = houghArray.Cast<int>().Min();
+
             for (int i = 0; i < 181; i++)
             {
                 for (int j = 0; j < 2 * maxRadius; j++)
                 {
-                    int brightness = (int)(255.0 * houghArray[i, j] / maxHoughValue);
+                    int brightness = (int)(255.0 * (houghArray[i, j] - minHoughValue) / (maxHoughValue - minHoughValue));
                     houghBitmap.SetPixel(i, j, Color.FromArgb(brightness, brightness, brightness));
                 }
             }
 
-            // Rescale the Hough Bitmap to 500x500
-            Bitmap resizedHoughBitmap = new Bitmap(500, 500);
+            // Resize the Hough Bitmap to match the input image dimensions
+            Bitmap resizedHoughBitmap = new Bitmap(image.Width, image.Height);
             using (Graphics g = Graphics.FromImage(resizedHoughBitmap))
             {
-                g.DrawImage(houghBitmap, 0, 0, 500, 500);
+                g.DrawImage(houghBitmap, 0, 0, image.Width, image.Height);
             }
 
             return resizedHoughBitmap;
+
         }
+
 
 
         private void peakFinding_Click(object sender, EventArgs e)
@@ -1890,21 +1894,85 @@ namespace INFOIBV
 
         private void houghLineDetection_Click(object sender, EventArgs e)
         {
-            if (pictureBox1.Image == null)
+            if (pictureBox4.Image == null)
             {
                 MessageBox.Show("Please load an image in pictureBox1 first.");
                 return;
             }
 
-            Bitmap originalImage = new Bitmap(pictureBox1.Image);
+            Bitmap originalImage = new Bitmap(pictureBox4.Image);
             Bitmap houghImage = new Bitmap(pictureBox2.Image);
 
             List<(double r, double theta)> peaks = ExtractPeaksFromHoughImage(houghImage);
-            List<LineSegment> segments = DetectLineSegments(originalImage, peaks);
-            Bitmap resultImage = VisualizeLineSegments(originalImage, segments);
+
+            // Define your thresholds and parameters here
+            int minIntensity = 200; // This is just a placeholder. Define a suitable threshold.
+            int minLength = 50; // Minimum length of a line segment
+            int maxGap = 5; // Maximum gap between pixels to still be considered part of the same line segment
+
+            List<LineSegment> allSegments = new List<LineSegment>();
+
+            foreach (var peak in peaks)
+            {
+                List<LineSegment> segments = HoughLineDetection(originalImage, peak, minIntensity, minLength, maxGap);
+                allSegments.AddRange(segments);
+            }
+
+            Bitmap resultImage = VisualizeLineSegments(originalImage, allSegments);
 
             pictureBox2.Image = resultImage;
             pictureBox2.Refresh();
+        }
+
+        private List<LineSegment> HoughLineDetection(Bitmap originalImage, (double r, double theta) peak, int minIntensity, int minLength, int maxGap)
+        {
+            List<LineSegment> segments = new List<LineSegment>();
+
+            List<Point> onPixels = new List<Point>();
+
+            // Collect all "on" pixels along the line defined by the (r, theta)-pair
+            for (int x = 0; x < originalImage.Width; x++)
+            {
+                int y = (int)((peak.r - x * Math.Cos(peak.theta)) / Math.Sin(peak.theta));
+                if (y >= 0 && y < originalImage.Height)
+                {
+                    Color pixel = originalImage.GetPixel(x, y);
+                    if (pixel.R > minIntensity) // Check against minimum intensity
+                    {
+                        onPixels.Add(new Point(x, y));
+                    }
+                }
+            }
+
+            // Process the onPixels list to detect segments
+            List<Point> currentSegment = new List<Point>();
+            int gapCount = 0;
+
+            foreach (Point pt in onPixels)
+            {
+                if (currentSegment.Count > 0 && (Math.Abs(pt.X - currentSegment.Last().X) > 1 || Math.Abs(pt.Y - currentSegment.Last().Y) > 1))
+                {
+                    gapCount++;
+                    if (gapCount > maxGap)
+                    {
+                        if (currentSegment.Count >= minLength)
+                        {
+                            segments.Add(new LineSegment(currentSegment.First(), currentSegment.Last()));
+                        }
+                        currentSegment.Clear();
+                        gapCount = 0;
+                    }
+                }
+                currentSegment.Add(pt);
+            }
+
+            // Handle the last segment
+            if (currentSegment.Count >= minLength)
+            {
+                segments.Add(new LineSegment(currentSegment.First(), currentSegment.Last()));
+            }
+
+            return segments;
         }
 
         private List<(double r, double theta)> ExtractPeaksFromHoughImage(Bitmap houghImage)
@@ -1926,40 +1994,6 @@ namespace INFOIBV
             }
 
             return peaks;
-        }
-
-        private List<LineSegment> DetectLineSegments(Bitmap originalImage, List<(double r, double theta)> peaks)
-        {
-            List<LineSegment> segments = new List<LineSegment>();
-
-            foreach (var peak in peaks)
-            {
-                double r = peak.r;
-                double theta = peak.theta;
-
-                // Convert polar coordinates to Cartesian for line equation
-                double a = Math.Cos(theta);
-                double b = Math.Sin(theta);
-                double x0 = a * r;
-                double y0 = b * r;
-
-                Point pt1, pt2;
-
-                if (theta < Math.PI / 4 || theta > 3 * Math.PI / 4) // Mostly vertical lines
-                {
-                    pt1 = new Point((int)(x0 + 1000 * (-b)), (int)(y0 + 1000 * a));
-                    pt2 = new Point((int)(x0 - 1000 * (-b)), (int)(y0 - 1000 * a));
-                }
-                else // Mostly horizontal lines
-                {
-                    pt1 = new Point((int)(x0 + 1000 * a), (int)(y0 + 1000 * (-b)));
-                    pt2 = new Point((int)(x0 - 1000 * a), (int)(y0 - 1000 * (-b)));
-                }
-
-                segments.Add(new LineSegment(pt1, pt2));
-            }
-
-            return segments;
         }
 
         public class LineSegment
@@ -1990,6 +2024,9 @@ namespace INFOIBV
 
             return resultImage;
         }
+
+
+
 
         private void visualizeHoughLineSegments_Click(object sender, EventArgs e)
         {
