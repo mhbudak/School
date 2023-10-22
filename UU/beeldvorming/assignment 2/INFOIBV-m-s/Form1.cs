@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -1757,7 +1762,8 @@ namespace INFOIBV
         // ====================================================================
         // ============= YOUR FUNCTIONS FOR ASSIGNMENT 3 GO HERE ==============
         // ====================================================================
-               
+        
+        //Hough transform
         private void houghTransform_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image == null)
@@ -1777,19 +1783,21 @@ namespace INFOIBV
             int h = image.Height;
             int w = image.Width;
             int maxRadius = (int)Math.Ceiling(Math.Sqrt(h * h + w * w));
-            int[,] houghArray = new int[181, 2 * maxRadius];
+            int thetaResolution = 500;  // 360 for 1 degree resolution, increase for finer resolution
+            int[,] houghArray = new int[thetaResolution, 2 * maxRadius];
 
             for (int y = 0; y < h; y++)
             {
                 for (int x = 0; x < w; x++)
                 {
                     Color pixel = image.GetPixel(x, y);
-                    if (pixel.R == 255) // Checking for white pixels
+                    if (pixel.R == 255)  // Checking for white pixels
                     {
-                        for (int theta = 0; theta <= 180; theta++)
+                        for (int theta = 0; theta < thetaResolution; theta++)
                         {
-                            double r = x * Math.Cos(Math.PI * theta / 180.0) + y * Math.Sin(Math.PI * theta / 180.0);
-                            int rInt = (int)Math.Round(r) + maxRadius; // Shifted to positive values
+                            double thetaRadians = Math.PI * theta / thetaResolution;
+                            double r = x * Math.Cos(thetaRadians) + y * Math.Sin(thetaRadians);
+                            int rInt = (int)Math.Round(r) + maxRadius;  // Shifted to positive values
                             houghArray[theta, rInt]++;
                         }
                     }
@@ -1797,32 +1805,26 @@ namespace INFOIBV
             }
 
             // Convert the Hough array to a Bitmap for visualization
-            Bitmap houghBitmap = new Bitmap(181, 2 * maxRadius);
+            Bitmap houghBitmap = new Bitmap(thetaResolution, 2 * maxRadius + 100);
             int maxHoughValue = houghArray.Cast<int>().Max();
-            int minHoughValue = houghArray.Cast<int>().Min();
 
-            for (int i = 0; i < 181; i++)
+            for (int i = 0; i < thetaResolution; i++)
             {
                 for (int j = 0; j < 2 * maxRadius; j++)
                 {
-                    int brightness = (int)(255.0 * (houghArray[i, j] - minHoughValue) / (maxHoughValue - minHoughValue));
+                    double normalizedValue = (double)houghArray[i, j] / maxHoughValue;
+                    int brightness = (int)(Math.Pow(normalizedValue, 0.5) * 255);  // Power-law transformation with gamma = 0.5
                     houghBitmap.SetPixel(i, j, Color.FromArgb(brightness, brightness, brightness));
+                    //houghBitmap.SetPixel(i, 2 * maxRadius - j - 1, Color.FromArgb(brightness, brightness, brightness));
+
                 }
             }
 
-            // Resize the Hough Bitmap to match the input image dimensions
-            Bitmap resizedHoughBitmap = new Bitmap(image.Width, image.Height);
-            using (Graphics g = Graphics.FromImage(resizedHoughBitmap))
-            {
-                g.DrawImage(houghBitmap, 0, 0, image.Width, image.Height);
-            }
 
-            return resizedHoughBitmap;
-
+            return houghBitmap;
         }
 
-
-
+        //Hough peak finding
         private void peakFinding_Click(object sender, EventArgs e)
         {
             if (pictureBox2.Image == null)
@@ -1833,66 +1835,204 @@ namespace INFOIBV
 
             Bitmap houghImage = new Bitmap(pictureBox2.Image);
             double thresholdPercentage = 0.7; // for example, 70% of the maximum value in the Hough image
-            List<(int r, int theta)> peaks = FindHoughPeaks(houghImage, thresholdPercentage);
+            List<Point> peaks = FindHoughPeaks(houghImage, thresholdPercentage);
 
             // Visualize the peaks on a new image (for demonstration purposes)
             Bitmap peakImage = new Bitmap(houghImage.Width, houghImage.Height);
-            for (int y = 0; y < houghImage.Height; y++)
+            using (Graphics g = Graphics.FromImage(peakImage))
             {
-                for (int x = 0; x < houghImage.Width; x++)
+                g.Clear(Color.Black);  // set all pixels to black initially
+                foreach (var peak in peaks)
                 {
-                    peakImage.SetPixel(x, y, Color.Black); // set all pixels to black initially
+                    g.FillEllipse(Brushes.White, peak.X - 2, peak.Y - 2, 4, 4);  // mark the peaks with white circles
                 }
-            }
-
-            foreach (var peak in peaks)
-            {
-                peakImage.SetPixel(peak.theta, peak.r, Color.White); // mark the peaks with white
             }
 
             pictureBox4.Image = peakImage;
             pictureBox4.Refresh();
         }
 
-        private List<(int r, int theta)> FindHoughPeaks(Bitmap houghImage, double thresholdPercentage)
+        private List<Point> FindHoughPeaks(Bitmap houghImage, double thresholdPercentage)
         {
             int width = houghImage.Width;
             int height = houghImage.Height;
-            int max = 0;
-            List<(int r, int theta)> peaks = new List<(int r, int theta)>();
+            int[,] accumulatorArray = new int[width, height];
 
-            // Find the maximum value in the Hough image
-            for (int y = 0; y < height; y++)
+
+            // Convert houghImage to accumulatorArray
+            for (int x = 0; x < width; x++)
             {
-                for (int x = 0; x < width; x++)
+                for (int y = 0; y < height; y++)
                 {
-                    int intensity = houghImage.GetPixel(x, y).R;
-                    if (intensity > max)
-                    {
-                        max = intensity;
-                    }
+                    Color pixel = houghImage.GetPixel(x, y);
+                    accumulatorArray[x, y] = (pixel.R + pixel.G + pixel.B) / 3;  // Assume grayscale
                 }
             }
 
+            // Thresholding
+            int max = accumulatorArray.Cast<int>().Max();
             int threshold = (int)(max * thresholdPercentage);
-
-            // Identify the peaks
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
             {
-                for (int x = 0; x < width; x++)
+                for (int y = 0; y < height; y++)
                 {
-                    int intensity = houghImage.GetPixel(x, y).R;
-                    if (intensity >= threshold)
+                    if (accumulatorArray[x, y] < threshold)
                     {
-                        peaks.Add((y, x)); // y corresponds to r and x corresponds to theta
+                        accumulatorArray[x, y] = 0;
                     }
                 }
             }
+
+            // Closing: Dilation followed by Erosion
+            int[,] dilatedArray = Dilation(accumulatorArray, width, height);
+            int[,] closedArray = Erosion(dilatedArray, width, height);
+
+            // Region finding and finding centers to identify lines
+            List<Point> peaks = FindRegionsAndCenters(closedArray, width, height);
+            Console.WriteLine("Max Value: " + max);
+            Console.WriteLine("Threshold: " + threshold);
 
             return peaks;
         }
 
+        private int[,] Dilation(int[,] array, int width, int height)
+        {
+            int[,] result = new int[width, height];
+            int[] dx = { -1, 0, 1, -1, 1, -1, 0, 1 };
+            int[] dy = { -1, -1, -1, 0, 0, 1, 1, 1 };
+
+            for (int x = 1; x < width - 1; x++)
+            {
+                for (int y = 1; y < height - 1; y++)
+                {
+                    int maxValue = 0;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        int nx = x + dx[i];
+                        int ny = y + dy[i];
+                        maxValue = Math.Max(maxValue, array[nx, ny]);
+                    }
+                    result[x, y] = maxValue;
+                }
+            }
+
+            return result;
+        }
+
+        private int[,] Erosion(int[,] array, int width, int height)
+        {
+            int[,] result = new int[width, height];
+            int[] dx = { -1, 0, 1, -1, 1, -1, 0, 1 };
+            int[] dy = { -1, -1, -1, 0, 0, 1, 1, 1 };
+
+            for (int x = 1; x < width - 1; x++)
+            {
+                for (int y = 1; y < height - 1; y++)
+                {
+                    int minValue = int.MaxValue;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        int nx = x + dx[i];
+                        int ny = y + dy[i];
+                        minValue = Math.Min(minValue, array[nx, ny]);
+                    }
+                    result[x, y] = minValue;
+                }
+            }
+
+            return result;
+        }
+
+        private List<Point> FindRegionsAndCenters(int[,] array, int width, int height)
+        {
+            List<Point> centers = new List<Point>();
+            bool[,] visited = new bool[width, height];
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (array[x, y] > 0 && !visited[x, y])
+                    {
+                        Queue<Point> queue = new Queue<Point>();
+                        queue.Enqueue(new Point(x, y));
+                        visited[x, y] = true;
+
+                        int sumX = 0, sumY = 0, count = 0;
+
+                        while (queue.Count > 0)
+                        {
+                            Point point = queue.Dequeue();
+                            sumX += point.X;
+                            sumY += point.Y;
+                            count++;
+
+                            for (int dx = -1; dx <= 1; dx++)
+                            {
+                                for (int dy = -1; dy <= 1; dy++)
+                                {
+                                    int nx = point.X + dx;
+                                    int ny = point.Y + dy;
+                                    if (nx >= 0 && nx < width && ny >= 0 && ny < height && array[nx, ny] > 0 && !visited[nx, ny])
+                                    {
+                                        queue.Enqueue(new Point(nx, ny));
+                                        visited[nx, ny] = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        int centerX = sumX / count;
+                        int centerY = sumY / count;
+                        centers.Add(new Point(centerX, centerY));
+                    }
+                }
+            }
+
+            return centers;
+        }
+
+
+        //Hough line detection
         private void houghLineDetection_Click(object sender, EventArgs e)
+        {
+            if (pictureBox4.Image == null)
+            {
+                MessageBox.Show("Please perform peak finding first.");
+                return;
+            }
+
+            Bitmap originalImage = new Bitmap(pictureBox1.Image);
+            List<Point> peaks = FindHoughPeaks(new Bitmap(pictureBox2.Image), 0.7);  // Assuming 70% threshold
+
+            Bitmap lineImage = new Bitmap(originalImage.Width, originalImage.Height);
+            using (Graphics g = Graphics.FromImage(lineImage))
+            {
+                g.Clear(Color.Black);  // Set all pixels to black initially
+
+                foreach (var peak in peaks)
+                {
+                    int r = peak.Y - originalImage.Width;  // Adjust the r value to account for the earlier shift
+                    int theta = peak.X * 180 / 500;  // Convert theta from pixel coordinate to degree, assuming 500-pixel width represents 180 degrees
+
+                    double thetaRadians = theta * Math.PI / 180;
+                    for (int x = 0; x < originalImage.Width; x++)
+                    {
+                        int y = (int)((r - x * Math.Cos(thetaRadians)) / Math.Sin(thetaRadians));
+                        if (y >= 0 && y < originalImage.Height)
+                        {
+                            lineImage.SetPixel(x, y, Color.Red);  // Draw the line in red
+                        }
+                    }
+                }
+            }
+
+            pictureBox4.Image = lineImage;
+            pictureBox4.Refresh();
+        }
+
+        // Hough visualization
+        private void visualizeHoughLineSegments_Click(object sender, EventArgs e)
         {
             if (pictureBox4.Image == null)
             {
@@ -1900,138 +2040,300 @@ namespace INFOIBV
                 return;
             }
 
-            Bitmap originalImage = new Bitmap(pictureBox4.Image);
-            Bitmap houghImage = new Bitmap(pictureBox2.Image);
+            Bitmap originalImage = new Bitmap(pictureBox1.Image);
+            List<Point> peaks = FindHoughPeaks(new Bitmap(pictureBox2.Image), 0.7);  // Assuming 70% threshold
 
-            List<(double r, double theta)> peaks = ExtractPeaksFromHoughImage(houghImage);
+            Bitmap lineSegmentImage = VisualizeHoughLineSegments(originalImage, peaks);
 
-            // Define your thresholds and parameters here
-            int minIntensity = 200; // This is just a placeholder. Define a suitable threshold.
-            int minLength = 50; // Minimum length of a line segment
-            int maxGap = 5; // Maximum gap between pixels to still be considered part of the same line segment
+            pictureBox1.Image = lineSegmentImage;
+            pictureBox1.Refresh();
+        }
 
-            List<LineSegment> allSegments = new List<LineSegment>();
+        private Bitmap VisualizeHoughLineSegments(Bitmap originalImage, List<Point> peaks)
+        {
+            Bitmap lineSegmentImage = new Bitmap(originalImage);  // Create a copy of the original image
 
-            foreach (var peak in peaks)
+            using (Graphics g = Graphics.FromImage(lineSegmentImage))
             {
-                List<LineSegment> segments = HoughLineDetection(originalImage, peak, minIntensity, minLength, maxGap);
-                allSegments.AddRange(segments);
+                foreach (var peak in peaks)
+                {
+                    int r = peak.Y - originalImage.Width;  // Adjust the r value to account for the earlier shift
+                    int theta = peak.X * 180 / 500;  // Convert theta from pixel coordinate to degree, assuming 500-pixel width represents 180 degrees
+
+                    double thetaRadians = theta * Math.PI / 180;
+
+                    // Calculate the two endpoints of the line segment
+                    Point p1, p2;
+                    if (theta == 0 || theta == 180)  // Vertical line
+                    {
+                        p1 = new Point(r, 0);
+                        p2 = new Point(r, originalImage.Height);
+                    }
+                    else if (theta == 90)  // Horizontal line
+                    {
+                        p1 = new Point(0, r);
+                        p2 = new Point(originalImage.Width, r);
+                    }
+                    else  // General case
+                    {
+                        int x1 = 0;
+                        int y1 = (int)((r - x1 * Math.Cos(thetaRadians)) / Math.Sin(thetaRadians));
+
+                        int x2 = originalImage.Width;
+                        int y2 = (int)((r - x2 * Math.Cos(thetaRadians)) / Math.Sin(thetaRadians));
+
+                        p1 = new Point(x1, y1);
+                        p2 = new Point(x2, y2);
+                    }
+
+                    // Draw the line segment on the image
+                    g.DrawLine(Pens.Red, p1, p2);
+                }
             }
 
-            Bitmap resultImage = VisualizeLineSegments(originalImage, allSegments);
+            return lineSegmentImage;
+        }
+        // Hough angle limits
+        private void houghTransformAngleLimits_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image == null)
+            {
+                MessageBox.Show("Please load an image in pictureBox1 first.");
+                return;
+            }
 
-            pictureBox2.Image = resultImage;
+            int angleMin = 45;  // Set your minimum angle here
+            int angleMax = 135;  // Set your maximum angle here
+
+            Bitmap inputImage = new Bitmap(pictureBox1.Image);
+            Bitmap houghImage = HoughTransformAngleLimits(inputImage, angleMin, angleMax);
+            pictureBox2.Image = houghImage;
             pictureBox2.Refresh();
         }
 
-        private List<LineSegment> HoughLineDetection(Bitmap originalImage, (double r, double theta) peak, int minIntensity, int minLength, int maxGap)
+        private Bitmap HoughTransformAngleLimits(Bitmap image, int angleMin, int angleMax)
         {
-            List<LineSegment> segments = new List<LineSegment>();
+            int h = image.Height;
+            int w = image.Width;
+            int maxRadius = (int)Math.Ceiling(Math.Sqrt(h * h + w * w));
+            int thetaResolution = 500;  // 360 for 1 degree resolution, increase for finer resolution
+            int[,] houghArray = new int[thetaResolution, 2 * maxRadius];
 
-            List<Point> onPixels = new List<Point>();
-
-            // Collect all "on" pixels along the line defined by the (r, theta)-pair
-            for (int x = 0; x < originalImage.Width; x++)
+            for (int y = 0; y < h; y++)
             {
-                int y = (int)((peak.r - x * Math.Cos(peak.theta)) / Math.Sin(peak.theta));
-                if (y >= 0 && y < originalImage.Height)
+                for (int x = 0; x < w; x++)
                 {
-                    Color pixel = originalImage.GetPixel(x, y);
-                    if (pixel.R > minIntensity) // Check against minimum intensity
+                    Color pixel = image.GetPixel(x, y);
+                    if (pixel.R == 255)  // Checking for white pixels
                     {
-                        onPixels.Add(new Point(x, y));
-                    }
-                }
-            }
-
-            // Process the onPixels list to detect segments
-            List<Point> currentSegment = new List<Point>();
-            int gapCount = 0;
-
-            foreach (Point pt in onPixels)
-            {
-                if (currentSegment.Count > 0 && (Math.Abs(pt.X - currentSegment.Last().X) > 1 || Math.Abs(pt.Y - currentSegment.Last().Y) > 1))
-                {
-                    gapCount++;
-                    if (gapCount > maxGap)
-                    {
-                        if (currentSegment.Count >= minLength)
+                        for (int theta = (int)((angleMin / 180.0) * thetaResolution); theta < (int)((angleMax / 180.0) * thetaResolution); theta++)
                         {
-                            segments.Add(new LineSegment(currentSegment.First(), currentSegment.Last()));
+                            double thetaRadians = Math.PI * theta / thetaResolution;
+                            double r = x * Math.Cos(thetaRadians) + y * Math.Sin(thetaRadians);
+                            int rInt = (int)Math.Round(r) + maxRadius;  // Shifted to positive values
+                            houghArray[theta, rInt]++;
                         }
-                        currentSegment.Clear();
-                        gapCount = 0;
                     }
                 }
-                currentSegment.Add(pt);
             }
 
-            // Handle the last segment
-            if (currentSegment.Count >= minLength)
+            // Convert the Hough array to a Bitmap for visualization
+            Bitmap houghBitmap = new Bitmap(thetaResolution, 2 * maxRadius + 100);
+            int maxHoughValue = houghArray.Cast<int>().Max();
+
+            for (int i = 0; i < thetaResolution; i++)
             {
-                segments.Add(new LineSegment(currentSegment.First(), currentSegment.Last()));
+                for (int j = 0; j < 2 * maxRadius; j++)
+                {
+                    double normalizedValue = (double)houghArray[i, j] / maxHoughValue;
+                    int brightness = (int)(Math.Pow(normalizedValue, 0.5) * 255);  // Power-law transformation with gamma = 0.5
+                    houghBitmap.SetPixel(i, j, Color.FromArgb(brightness, brightness, brightness));
+                }
             }
 
-            return segments;
+            return houghBitmap;
         }
 
-        private List<(double r, double theta)> ExtractPeaksFromHoughImage(Bitmap houghImage)
+        //circles 
+        private void Forcircles_Click(object sender, EventArgs e)
         {
-            List<(double r, double theta)> peaks = new List<(double r, double theta)>();
-
-            for (int y = 0; y < houghImage.Height; y++)
+            if (pictureBox1.Image == null)
             {
-                for (int x = 0; x < houghImage.Width; x++)
+                MessageBox.Show("Please load an image in pictureBox1 first.");
+                return;
+            }
+
+            Bitmap inputImage = new Bitmap(pictureBox1.Image);
+            Bitmap circleImage = HoughTransformCircles(inputImage, 10, 50);  // Assuming radius range 10 to 50
+            pictureBox2.Image = circleImage;
+            pictureBox2.Refresh();
+        }
+
+        private Bitmap HoughTransformCircles(Bitmap image, int minRadius, int maxRadius)
+        {
+            int h = image.Height;
+            int w = image.Width;
+            int[,,] houghArray = new int[w, h, maxRadius - minRadius + 1];
+
+            // Voting
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
                 {
-                    Color pixel = houghImage.GetPixel(x, y);
-                    if (pixel.R > 200) // Assuming white or near-white pixels indicate peaks
+                    Color pixel = image.GetPixel(x, y);
+                    if (pixel.R == 255)  // Assuming white pixels represent edges
                     {
-                        double r = y - houghImage.Height / 2; // Adjusting for the center
-                        double theta = (Math.PI / houghImage.Width) * x; // Mapping x to theta
-                        peaks.Add((r, theta));
+                        for (int radius = minRadius; radius <= maxRadius; radius++)
+                        {
+                            for (int theta = 0; theta < 360; theta++)
+                            {
+                                double thetaRadians = Math.PI * theta / 180;
+                                int a = x - (int)(radius * Math.Cos(thetaRadians));
+                                int b = y - (int)(radius * Math.Sin(thetaRadians));
+                                if (a >= 0 && a < w && b >= 0 && b < h)
+                                {
+                                    houghArray[a, b, radius - minRadius]++;
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            return peaks;
-        }
-
-        public class LineSegment
-        {
-            public Point Start { get; set; }
-            public Point End { get; set; }
-
-            public LineSegment(Point start, Point end)
+            // Finding max votes
+            int maxVotes = 0;
+            for (int x = 0; x < w; x++)
             {
-                Start = start;
-                End = end;
-            }
-        }
-
-        private Bitmap VisualizeLineSegments(Bitmap originalImage, List<LineSegment> segments)
-        {
-            Bitmap resultImage = new Bitmap(originalImage);
-
-            using (Graphics g = Graphics.FromImage(resultImage))
-            {
-                Pen pen = new Pen(Color.Red, 2); // Red color for visualizing lines
-
-                foreach (var segment in segments)
+                for (int y = 0; y < h; y++)
                 {
-                    g.DrawLine(pen, segment.Start, segment.End);
+                    for (int r = 0; r < maxRadius - minRadius + 1; r++)
+                    {
+                        maxVotes = Math.Max(maxVotes, houghArray[x, y, r]);
+                    }
                 }
             }
 
-            return resultImage;
+            // Thresholding (e.g., at 50% of max votes)
+            int threshold = maxVotes / 2;
+            Bitmap circleImage = new Bitmap(w, h);
+            using (Graphics g = Graphics.FromImage(circleImage))
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    for (int y = 0; y < h; y++)
+                    {
+                        for (int r = 0; r < maxRadius - minRadius + 1; r++)
+                        {
+                            if (houghArray[x, y, r] >= threshold)
+                            {
+                                g.DrawEllipse(Pens.Red, x - r + minRadius, y - r + minRadius, 1 * (r + minRadius), 1 * (r + minRadius));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return circleImage;
         }
 
-
-
-
-        private void visualizeHoughLineSegments_Click(object sender, EventArgs e)
+        //ellipses 
+        private void Forellipses_Click(object sender, EventArgs e)
         {
+            if (pictureBox1.Image == null)
+            {
+                MessageBox.Show("Please load an image in pictureBox1 first.");
+                return;
+            }
 
+            Bitmap inputImage = new Bitmap(pictureBox1.Image);
+            Bitmap ellipseImage = HoughTransformEllipses(inputImage, 10, 50);  // Assuming r1 and r2 range from 10 to 50
+            pictureBox2.Image = ellipseImage;
+            pictureBox2.Refresh();
         }
+
+        private Bitmap HoughTransformEllipses(Bitmap image, int minRadius, int maxRadius)
+        {
+            int h = image.Height;
+            int w = image.Width;
+            int[,,,] houghArray = new int[w, h, maxRadius - minRadius + 1, maxRadius - minRadius + 1];  // 4D array for a, b, r1, and r2
+
+            // Lock image data
+            BitmapData imageData = image.LockBits(new Rectangle(0, 0, w, h), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            IntPtr ptr = imageData.Scan0;
+            int bytes = Math.Abs(imageData.Stride) * h;
+            byte[] rgbValues = new byte[bytes];
+            System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
+
+            // Voting
+            Parallel.For(0, w, x =>
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    Color pixel = image.GetPixel(x, y);
+                    if (pixel.R == 255)  // Assuming white pixels represent edges
+                    {
+                        for (int r1 = minRadius; r1 <= maxRadius; r1++)
+                        {
+                            for (int r2 = minRadius; r2 <= maxRadius; r2++)
+                            {
+                                int a = x;
+                                int b = y;
+                                if (a - r1 >= 0 && a + r1 < w && b - r2 >= 0 && b + r2 < h)
+                                {
+                                    // Ensure thread-safety when incrementing the houghArray
+                                    Interlocked.Increment(ref houghArray[a, b, r1 - minRadius, r2 - minRadius]);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Unlock the bits.
+            image.UnlockBits(imageData);
+
+            // Finding max votes
+            int maxVotes = 0;
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    for (int r1 = 0; r1 < maxRadius - minRadius + 1; r1++)
+                    {
+                        for (int r2 = 0; r2 < maxRadius - minRadius + 1; r2++)
+                        {
+                            maxVotes = Math.Max(maxVotes, houghArray[x, y, r1, r2]);
+                        }
+                    }
+                }
+            }
+
+            // Thresholding (e.g., at 50% of max votes)
+            int threshold = maxVotes / 2;
+            Bitmap ellipseImage = new Bitmap(w, h);
+            using (Graphics g = Graphics.FromImage(ellipseImage))
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    for (int y = 0; y < h; y++)
+                    {
+                        for (int r1 = 0; r1 < maxRadius - minRadius + 1; r1++)
+                        {
+                            for (int r2 = 0; r2 < maxRadius - minRadius + 1; r2++)
+                            {
+                                if (houghArray[x, y, r1, r2] >= threshold)
+                                {
+                                    g.DrawEllipse(Pens.Red, x - r1 + minRadius, y - r2 + minRadius, 2 * (r1 + minRadius), 2 * (r2 + minRadius));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return ellipseImage;
+        }
+
     }
 
 }

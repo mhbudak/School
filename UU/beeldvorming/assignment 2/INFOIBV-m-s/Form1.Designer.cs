@@ -81,6 +81,9 @@
             this.peakFinding = new System.Windows.Forms.Button();
             this.houghLineDetection = new System.Windows.Forms.Button();
             this.visualizeHoughLineSegments = new System.Windows.Forms.Button();
+            this.houghTransformAngleLimits = new System.Windows.Forms.Button();
+            this.Forcircles = new System.Windows.Forms.Button();
+            this.Forellipses = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -238,6 +241,7 @@
             this.pictureBox3.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(256, 256);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox3.TabIndex = 14;
             this.pictureBox3.TabStop = false;
             this.pictureBox3.Click += new System.EventHandler(this.PictureBox3_Click);
@@ -522,6 +526,7 @@
             this.pictureBox4.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(500, 500);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox4.TabIndex = 43;
             this.pictureBox4.TabStop = false;
             // 
@@ -633,11 +638,44 @@
             this.visualizeHoughLineSegments.UseVisualStyleBackColor = true;
             this.visualizeHoughLineSegments.Click += new System.EventHandler(this.visualizeHoughLineSegments_Click);
             // 
+            // houghTransformAngleLimits
+            // 
+            this.houghTransformAngleLimits.Location = new System.Drawing.Point(714, 269);
+            this.houghTransformAngleLimits.Name = "houghTransformAngleLimits";
+            this.houghTransformAngleLimits.Size = new System.Drawing.Size(171, 39);
+            this.houghTransformAngleLimits.TabIndex = 56;
+            this.houghTransformAngleLimits.Text = "houghTransformAngleLimits";
+            this.houghTransformAngleLimits.UseVisualStyleBackColor = true;
+            this.houghTransformAngleLimits.Click += new System.EventHandler(this.houghTransformAngleLimits_Click);
+            // 
+            // Forcircles
+            // 
+            this.Forcircles.Location = new System.Drawing.Point(902, 269);
+            this.Forcircles.Name = "Forcircles";
+            this.Forcircles.Size = new System.Drawing.Size(124, 39);
+            this.Forcircles.TabIndex = 57;
+            this.Forcircles.Text = "Forcircles";
+            this.Forcircles.UseVisualStyleBackColor = true;
+            this.Forcircles.Click += new System.EventHandler(this.Forcircles_Click);
+            // 
+            // Forellipses
+            // 
+            this.Forellipses.Location = new System.Drawing.Point(1047, 269);
+            this.Forellipses.Name = "Forellipses";
+            this.Forellipses.Size = new System.Drawing.Size(132, 39);
+            this.Forellipses.TabIndex = 58;
+            this.Forellipses.Text = "Forellipses";
+            this.Forellipses.UseVisualStyleBackColor = true;
+            this.Forellipses.Click += new System.EventHandler(this.Forellipses_Click);
+            // 
             // INFOIBV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.Forellipses);
+            this.Controls.Add(this.Forcircles);
+            this.Controls.Add(this.houghTransformAngleLimits);
             this.Controls.Add(this.visualizeHoughLineSegments);
             this.Controls.Add(this.houghLineDetection);
             this.Controls.Add(this.peakFinding);
@@ -759,6 +797,9 @@
         private System.Windows.Forms.Button peakFinding;
         private System.Windows.Forms.Button houghLineDetection;
         private System.Windows.Forms.Button visualizeHoughLineSegments;
+        private System.Windows.Forms.Button houghTransformAngleLimits;
+        private System.Windows.Forms.Button Forcircles;
+        private System.Windows.Forms.Button Forellipses;
     }
 }
 
